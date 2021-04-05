@@ -1,0 +1,76 @@
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+enum PostType {
+  VIDEO
+  IMAGE
+}
+
+model Comment {
+  id         String    @id @default(uuid())
+  text       String
+  image      String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  author     User      @relation(fields: [author_id], references: [id])
+  author_id  String
+  post       Post      @relation(fields: [post_id], references: [id])
+  post_id    String
+  likes      Int
+  reply      Comment   @relation("CommentToComment", fields: [comment_id], references: [id])
+  Comment    Comment[] @relation("CommentToComment")
+  comment_id  String
+
+}
+
+model Post {
+  id         String    @id @default(uuid())
+  title      String    @db.Char(255)
+  type       PostType  @default(IMAGE)
+  content    String
+  published  Boolean   @default(false)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  author     User      @relation(fields: [author_id], references: [id])
+  author_id  String
+  comments   Comment[]
+  tags String[]
+  is_public Boolean @default(true)
+}
+
+model Token {
+  token_id   String   @id @default(uuid())
+  ip_address Float
+  address    String
+  created_at DateTime @default(now())
+  expires_at DateTime
+  device     String
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    String
+}
+
+model User {
+  id                   String    @id @default(uuid())
+  first_name           String    @db.Char(20)
+  last_name            String    @db.Char(20)
+  username             String    @unique  @db.Char(20)
+  email                String    @unique
+  email_verified       Boolean   @default(false)
+  password             String    @db.Char(90)
+  password_changed_at  DateTime  @default(now())
+  password_reset_token String?
+  active               Boolean   @default(true)
+  tokens               Token[]
+  images               Json
+  address              String?
+  created_at           DateTime  @default(now())
+  updated_at           DateTime  @updatedAt
+  save_post            Post[]
+  comments             Comment[]
+}
