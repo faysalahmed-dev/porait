@@ -1,26 +1,26 @@
-import { PrismaClient } from '@prisma/client';
 import { GraphQLServer } from 'graphql-yoga';
+import { createContext } from './prisma';
+import resolvers from './src/resolvers';
+import { GraphQLFileLoader, addResolversToSchema, loadSchemaSync } from 'graphql-tools';
+import path from 'path';
 
-const prisma = new PrismaClient({
-	errorFormat: 'pretty',
-	log: ['error', 'info', 'query', 'warn']
+const filePath = path.join(__dirname, 'src', 'graphql-schema', 'schema.graphql');
+const schema = loadSchemaSync(filePath, {
+	loaders: [new GraphQLFileLoader()]
 });
-const typeDefs = `
-  type Query {
-    hello(name: String): String!
-  }
-`;
 
-const resolvers = {
-	Query: {
-		hello: (__: any, { name }: { name: String }) => `Hello ${name || 'World'}`
-	}
-};
+const schemaWithResolvers = addResolversToSchema({
+	schema,
+	resolvers
+});
 
-const server = new GraphQLServer({ typeDefs, resolvers });
+const server = new GraphQLServer({
+	schema: schemaWithResolvers,
+	context: createContext
+});
 
 const options = {
-	port: 8000,
+	port: process.env.PORT || 8000,
 	endpoint: '/graphql',
 	subscriptions: '/subscriptions',
 	playground: '/___playground'

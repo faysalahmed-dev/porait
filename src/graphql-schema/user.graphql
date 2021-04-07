@@ -1,0 +1,74 @@
+type Image {
+	cover: String
+	profile: String
+	images: [String]
+}
+
+type Token {
+	token_id: ID!
+	token: String!
+	ip_address: String
+	address: String
+	created_at: String
+	expires_at: String
+	device: String
+}
+
+type User {
+	id: ID!
+	first_name: String!
+	last_name: String!
+	username: String!
+	email: String!
+	image: Image
+	address: String
+}
+
+type UserResult {
+	id: ID!
+	first_name: String!
+	last_name: String!
+	username: String!
+	email: String!
+	token: String!
+}
+
+type Query {
+	user: User
+}
+
+input RegisterInput {
+	first_name: String!
+	last_name: String!
+	username: String!
+	email: String!
+	password: String!
+}
+
+input LoginInput {
+	username: String
+	email: String
+	password: String!
+}
+
+input ForgetPassword {
+	email: String!
+}
+
+input VerifyPasswordResetTokenInput {
+	user_id: String!
+	token: String!
+	password: String!
+}
+input EmailVerifyInput {
+	user_id: String!
+	token: String!
+}
+type Mutation {
+	register(data: RegisterInput!): UserResult!
+	login(data: LoginInput!): UserResult!
+	forgetPassword(data: ForgetPassword!): String!
+	verifyPasswordResetToken(data: VerifyPasswordResetTokenInput!): String
+	verifyEmail(data: EmailVerifyInput!): String
+	resendVerifyEmailToken(user_id: String!): String
+}

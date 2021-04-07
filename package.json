@@ -1,49 +1,66 @@
 {
-    "name": "porait",
-    "version": "1.0.0",
-    "description": "",
-    "main": "server.js",
-    "scripts": {
-        "dev": "env-cmd -f ./.env nodemon server.ts",
-        "prisma-format": "prisma format",
-        "migrate": "npx prisma migrate dev --name init",
-        "lint": "tsc --noEmit && eslint . --ext js,ts,json --quiet --fix"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+ssh://git@github.com/faysal146/porait.git"
-    },
-    "author": {
-        "name": "Faysal Ahmed",
-        "url": "https://www.github.com/faysal146"
-    },
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/faysal146/porait/issues"
-    },
-    "homepage": "https://github.com/faysal146/porait#readme",
-    "dependencies": {
-        "@prisma/client": "^2.20.1",
-        "bcryptjs": "^2.4.3",
-        "crypto-js": "^4.0.0",
-        "graphql-yoga": "^1.18.3",
-        "jsonwebtoken": "^8.5.1",
-        "lodash": "^4.17.21",
-        "moment": "^2.29.1",
-        "validator": "^13.5.2"
-    },
-    "devDependencies": {
-        "@types/node": "^14.14.37",
-        "@typescript-eslint/eslint-plugin": "^4.20.0",
-        "@typescript-eslint/parser": "^4.20.0",
-        "env-cmd": "^10.1.0",
-        "eslint": "^7.23.0",
-        "eslint-config-prettier": "^8.1.0",
-        "eslint-plugin-prettier": "^3.3.1",
-        "nodemon": "^2.0.7",
-        "prettier": "^2.2.1",
-        "prisma": "^2.20.1",
-        "ts-node": "^9.1.1",
-        "typescript": "^4.2.3"
-    }
+	"name": "porait",
+	"version": "1.0.0",
+	"description": "",
+	"main": "server.js",
+	"scripts": {
+		"dev": "env-cmd -f ./.env nodemon server.ts",
+		"prisma-format": "prisma format",
+		"migrate": "npx prisma migrate dev",
+		"lint": "tsc --noEmit && eslint . --ext js,ts,json --quiet --fix",
+		"ngrok": "ngrok http 8000",
+		"test": "nodemon ./src/helpers/email.ts"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/faysal146/porait.git"
+	},
+	"author": {
+		"name": "Faysal Ahmed",
+		"url": "https://www.github.com/faysal146"
+	},
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/faysal146/porait/issues"
+	},
+	"homepage": "https://github.com/faysal146/porait#readme",
+	"dependencies": {
+		"@prisma/client": "^2.20.1",
+		"@types/bcryptjs": "^2.4.2",
+		"@types/jsonwebtoken": "^8.5.1",
+		"@types/useragent": "^2.3.0",
+		"@types/validator": "^13.1.3",
+		"bcryptjs": "^2.4.3",
+		"crypto-js": "^4.0.0",
+		"geoip-lite": "^1.4.2",
+		"graphql-tools": "^7.0.4",
+		"graphql-yoga": "^1.18.3",
+		"jsonwebtoken": "^8.5.1",
+		"lodash": "^4.17.21",
+		"moment": "^2.29.1",
+		"nodemailer": "^6.5.0",
+		"pug": "^3.0.2",
+		"request-ip": "^2.1.3",
+		"useragent": "^2.3.0",
+		"validator": "^13.5.2"
+	},
+	"devDependencies": {
+		"@types/geoip-lite": "^1.4.1",
+		"@types/lodash": "^4.14.168",
+		"@types/node": "^14.14.37",
+		"@types/nodemailer": "^6.4.1",
+		"@types/pug": "^2.0.4",
+		"@typescript-eslint/eslint-plugin": "^4.20.0",
+		"@typescript-eslint/parser": "^4.20.0",
+		"env-cmd": "^10.1.0",
+		"eslint": "^7.23.0",
+		"eslint-config-prettier": "^8.1.0",
+		"eslint-plugin-prettier": "^3.3.1",
+		"ngrok": "^4.0.1",
+		"nodemon": "^2.0.7",
+		"prettier": "^2.2.1",
+		"prisma": "^2.20.1",
+		"ts-node": "^9.1.1",
+		"typescript": "^4.2.3"
+	}
 }

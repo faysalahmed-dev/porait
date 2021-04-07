@@ -1,3 +1,4 @@
 {
-  "ignore": ["client/*"]
+	"ignore": ["client/*"],
+	"ext": "js,ts,graphql"
 }

@@ -1,4 +1,3 @@
-node_modules
-prisma
 tsconfig.json
+node_modules/
 client/
