@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: theme('fontFamily.body');
+	font-weight: 500;
+}
+
+.btn-green {
+	@apply inline-flex items-center bg-green-500 border-0 py-2 px-3 focus:outline-none hover:bg-green-400 rounded text-white;
+}
+
+.btn-gray {
+	@apply inline-flex items-center bg-gray-800 border-0 py-2 px-3 focus:outline-none hover:bg-gray-700 rounded text-white;
+}
+
+.btn-gray-lg {
+	@apply mt-3 text-lg font-semibold bg-gray-800 w-full text-white rounded-lg px-6 py-3 block hover:text-white hover:bg-gray-700;
+}
+
+#confirm-password::placeholder,
+#password::placeholder {
+	font-size: 35px;
+	font-weight: 500;
+	line-height: 2;
+}
+
+#login-form input::placeholder {
+	color: theme('colors.gray.400') !important;
+}
+
+.auth-input-label {
+	@apply px-1 mb-2 text-sm text-gray-600 leading-snug font-bold inline-block;
+}
+
+.auth-input {
+	@apply block pl-10 pr-3 py-2 rounded-lg w-full bg-white border-2 border-gray-300 placeholder-gray-600 shadow-md focus:placeholder-gray-400 focus:bg-white focus:border-gray-400 focus:outline-none font-bold text-gray-600;
+}
+
+.search-input {
+	@apply block px-3 py-2 rounded-lg w-full bg-white border-2 border-gray-300 placeholder-gray-400 focus:placeholder-gray-300 focus:bg-white focus:border-gray-400 focus:outline-none font-bold text-gray-600;
+}
+
+.auth-input-error {
+	@apply px-1 text-sm text-red-600 leading-snug font-bold inline-block capitalize;
+}
+
+.auth-input-icon {
+	@apply absolute inset-y-0 left-0 pl-3 flex items-center text-2xl leading-5 text-gray-800;
+}
+
+.auth-route-link {
+	@apply inline-block text-green-500 border-b-2 border-green-500 font-bold mx-auto hover:text-green-600;
+}
+
+.loader .loader-inner > div {
+	width: 10px;
+	height: 10px;
+}
+
+button:disabled {
+	opacity: 0.8;
+	pointer-events: none;
+}
