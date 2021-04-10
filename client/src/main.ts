@@ -4,6 +4,7 @@ import App from './App.vue';
 import { ApolloClients } from '@vue/apollo-composable';
 import './assets/style.css';
 import 'eva-icons/style/eva-icons.css';
+import Layout from './components/layout.vue';
 import 'loaders.css/loaders.css';
 
 // HTTP connection to the API
@@ -26,5 +27,7 @@ const app = createApp({
 	},
 	render: () => h(App)
 });
+
+app.component('default-layout', Layout);
 
 app.mount('#app');
