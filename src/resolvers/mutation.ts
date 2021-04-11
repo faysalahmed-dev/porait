@@ -17,13 +17,20 @@ import isEmpty from 'validator/lib/isEmpty';
 import eamilSender, { genEmailToken } from '../helpers/email';
 import _ from 'lodash';
 import { getUserAgent } from '../helpers/utils';
+import url from 'url';
 
+enum Gender {
+	'male',
+	'female',
+	'other'
+}
 interface IUserData {
 	first_name: string;
 	last_name: string;
 	email: string;
 	username: string;
 	password: string;
+	gender: Gender;
 }
 
 type MyEnum = 'email' | 'username';
@@ -54,44 +61,71 @@ interface PasswordResetObj {
 const UserResolver: IResolvers = {
 	async register(parent, args: { data: IUserData }, context: Context) {
 		try {
-			await context.prisma.user.delete({
-				where: {
-					username: 'faysal146'
-				}
-			});
-			const { email, password, username, first_name, last_name } = args.data;
+			// will remove this line
+			await context.prisma.user.deleteMany({});
+			const {
+				email,
+				password,
+				username,
+				first_name,
+				last_name,
+				gender
+			} = args.data;
 
-			// check user alreay exits
+			// check user already exits
 			const userExits = await context.prisma.user.findFirst({
 				where: {
 					OR: [{ email }, { username }]
 				}
 			});
-			if (userExits) throw new Error('user already exits');
-
+			if (userExits)
+				throw new Error(
+					`user already exits with this ${
+						userExits.email === email ? 'email' : 'username'
+					}`
+				);
+			// hash the user password
 			const hashedPassword = await hashPassword(password);
+			// get app url(server)
+			const hostUrl = url.format({
+				protocol: context.request.protocol,
+				host: context.request.get('host')
+			});
+			// genrate email verify token
+			const emailVerifyToken = genEmailToken();
+
+			// create user
 			const user = await context.prisma.user.create({
 				data: {
 					email: email.toLowerCase(),
 					password: hashedPassword,
 					username,
 					first_name,
-					last_name
+					last_name,
+					// @ts-ignore
+					gender,
+					email_verify_token: emailVerifyToken,
+					images: JSON.stringify({
+						avater: `${hostUrl}/images/${gender}-avater.png`,
+						cover: `${hostUrl}/images/default-cover.png`,
+						uploaded: [`${hostUrl}/images/${gender}-avater.png`]
+					})
 				}
 			});
+			// genrate auth token
 			const token = await getToken(user.id);
+			// get user ip address
 			const ip_address = getClientIp(context.request);
+			// get user location details from ip addess -> city, timezone, area
 			let details = {};
 			if (isIp(ip_address)) {
 				details = geoIp.lookup(ip_address) || {};
 			}
 			const expires_at = decode(token) as { id: string; exp: string; iat: string };
-			const emailVerifyToken = genEmailToken();
-
+			// save genarated token
 			await context.prisma.user.update({
 				where: { id: user.id },
 				data: {
-					email_verify_token: emailVerifyToken,
 					tokens: {
 						create: {
 							token,
@@ -104,7 +138,7 @@ const UserResolver: IResolvers = {
 				}
 			});
 			// send verifaction email
-			const resetUrl = `${context.request.headers.host}/verify-email?email_token=${emailVerifyToken}&user_id=${user.id}`;
+			const resetUrl = `${hostUrl}/verify-email?email_token=${emailVerifyToken}&user_id=${user.id}`;
 			if (process.env.NODE_ENV === 'production') {
 				await eamilSender.sendMail({
 					from: 'support@porait.com',
