@@ -3,6 +3,7 @@ import { createContext } from './prisma';
 import resolvers from './src/resolvers';
 import { GraphQLFileLoader, addResolversToSchema, loadSchemaSync } from 'graphql-tools';
 import path from 'path';
+import serveStatic from 'serve-static';
 
 const filePath = path.join(__dirname, 'src', 'graphql-schema', 'schema.graphql');
 const schema = loadSchemaSync(filePath, {
@@ -25,6 +26,8 @@ const options = {
 	subscriptions: '/subscriptions',
 	playground: '/___playground'
 };
+server.express.use(serveStatic(path.join(__dirname, 'public')));
+
 server.start(options, ({ port }) => {
 	console.log('server is running on port ' + port);
 });
