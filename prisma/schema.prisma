@@ -56,6 +56,11 @@ model Token {
   user_id    String?
 }
 
+enum Gender {
+  male
+  female
+  other
+}
 
 model User {
   id                   String    @id @default(uuid())
@@ -71,6 +76,7 @@ model User {
   active               Boolean   @default(true)
   tokens               Token[]
   images               Json?
+  gender               Gender
   address              String?
   created_at           DateTime  @default(now())
   updated_at           DateTime  @updatedAt
