@@ -1,7 +1,7 @@
-type Image {
-	cover: String
-	profile: String
-	images: [String]
+enum Gender {
+	male
+	female
+	other
 }
 
 type Token {
@@ -20,8 +20,10 @@ type User {
 	last_name: String!
 	username: String!
 	email: String!
-	image: Image
+	email_verified: Boolean!
+	images: String
 	address: String
+	gender: Gender!
 }
 
 type UserResult {
@@ -30,7 +32,10 @@ type UserResult {
 	last_name: String!
 	username: String!
 	email: String!
+	email_verified: Boolean!
+	images: String
 	token: String!
+	gender: Gender!
 }
 
 type Query {
@@ -43,6 +48,7 @@ input RegisterInput {
 	username: String!
 	email: String!
 	password: String!
+	gender: Gender!
 }
 
 input LoginInput {
