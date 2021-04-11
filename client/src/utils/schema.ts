@@ -24,7 +24,7 @@ const usernameSchema = yup
 	.string()
 	.required('username required')
 	.min(4, 'user name to short')
-	.max(12, 'user name to long');
+	.max(19, 'user name to long');
 const firstNameSchema = yup.string().required('first name required');
 const lastNameSchema = yup.string().required('last name required');
 
@@ -39,7 +39,8 @@ const registerSchema = yup.object({
 	username: usernameSchema,
 	email: emailSchema,
 	password: passwordSchema,
-	confirmPassword: confirmPasswordSchema
+	confirmPassword: confirmPasswordSchema,
+	inputChecked: yup.boolean().isTrue()
 });
 
 export { loginSchema, registerSchema };
