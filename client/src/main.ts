@@ -4,7 +4,9 @@ import App from './App.vue';
 import { ApolloClients } from '@vue/apollo-composable';
 import Router from './router/index';
 import Layout from './components/layout.vue';
+import Toast, { PluginOptions, POSITION } from 'vue-toastification';
 
+import 'vue-toastification/dist/index.css';
 import 'eva-icons/style/eva-icons.css';
 import './assets/style.css';
 import 'loaders.css/loaders.css';
@@ -18,7 +20,8 @@ const httpLink = createHttpLink({
 // Create the apollo client
 const apolloClient = new ApolloClient({
 	link: httpLink,
-	cache: new InMemoryCache()
+	cache: new InMemoryCache(),
+	connectToDevTools: true
 });
 
 const app = createApp({
@@ -31,6 +34,13 @@ const app = createApp({
 });
 app.component('default-layout', Layout);
 
-app.use(Router);
+const options: PluginOptions = {
+	position: POSITION.TOP_RIGHT,
+	timeout: 3000,
+	bodyClassName: ['font-body', 'capitalize', 'font-bold'],
+	closeButtonClassName: ['opacity-100', 'text-white']
+};
 
+app.use(Toast, options);
+app.use(Router);
 app.mount('#app');
