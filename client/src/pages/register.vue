@@ -15,7 +15,6 @@
 					<div class="relative">
 						<input
 							placeholder="Jhon"
-							name="first_name"
 							type="text"
 							class="auth-input"
 							v-model="first_name"
@@ -32,7 +31,6 @@
 					<span class="auth-input-label"> Last Name </span>
 					<div class="relative">
 						<input
-							name="last_name"
 							placeholder="Deo"
 							type="text"
 							class="auth-input"
@@ -53,7 +51,6 @@
 							placeholder="user@email.com"
 							type="text"
 							class="auth-input"
-							name="email"
 							v-model="email"
 						/>
 						<div class="auth-input-icon">
@@ -71,7 +68,6 @@
 							placeholder="user@email.com"
 							type="text"
 							class="auth-input"
-							name="username"
 							v-model="username"
 						/>
 						<div class="auth-input-icon">
@@ -90,7 +86,6 @@
 							placeholder="................"
 							:type="showPassword ? 'text' : 'password'"
 							class="auth-input"
-							name="password"
 							v-model="password"
 						/>
 						<div class="auth-input-icon">
@@ -122,7 +117,6 @@
 							placeholder="................"
 							:type="showConfirmPassword ? 'text' : 'password'"
 							class="auth-input"
-							name="confirmPassword"
 							v-model="confirmPassword"
 						/>
 						<div class="auth-input-icon">
@@ -145,6 +139,51 @@
 					<span v-if="errors.confirmPassword" class="auth-input-error">
 						{{ errors.confirmPassword }}
 					</span>
+				</div>
+				<div class="grid-cols-2 py-2" style="grid-column: 1 / span 2">
+					<div class="relative inline-flex">
+						<svg
+							class="w-2 h-2 absolute top-0 right-0 m-4 pointer-events-none"
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 412 232"
+						>
+							<path
+								d="M206 171.144L42.678 7.822c-9.763-9.763-25.592-9.763-35.355 0-9.763 9.764-9.763 25.592 0 35.355l181 181c4.88 4.882 11.279 7.323 17.677 7.323s12.796-2.441 17.678-7.322l181-181c9.763-9.764 9.763-25.592 0-35.355-9.763-9.763-25.592-9.763-35.355 0L206 171.144z"
+								fill="#648299"
+								fill-rule="nonzero"
+							/>
+						</svg>
+						<select
+							class="border-2 border-gray-300 rounded-lg text-gray-600 shadow-md h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none font-bold appearance-none"
+							v-model="gender"
+						>
+							<option class="font-bold" value="male">Male</option>
+							<option value="female" class="font-bold inline-block">
+								Female
+							</option>
+							<option value="other" class="font-bold inline-block">
+								Other
+							</option>
+						</select>
+					</div>
+					<label
+						class="inline-flex items-center ml-4 text-sm font-bold"
+						:class="errors.inputChecked && 'check-box-error'"
+					>
+						<input
+							type="checkbox"
+							class="h-5 w-5"
+							v-model="inputChecked"
+							checked
+						/>
+						<span
+							:class="`select-none ml-3 inline-block capitalize ${
+								inputChecked ? 'text-green-500' : 'text-red-500'
+							}`"
+						>
+							I agree All the Trams and conditions
+						</span>
+					</label>
 				</div>
 				<div class="grid-cols-2 mt-4" style="grid-column: 1 / span 2">
 					<button
@@ -176,24 +215,35 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import UserIcon from '../components/utils/user-icon.vue';
 import { registerSchema } from '../utils/schema';
+import { useMutation } from '@vue/apollo-composable';
+import gql from 'graphql-tag';
+import omit from 'lodash/omit';
+// @ts-ignore
+import { useToast } from 'vue-toastification';
+import { regsiterMutation } from '../typeDefs';
 
 export default defineComponent({
 	setup() {
+		const router = useRouter();
 		const showPassword = ref(false);
 		const showConfirmPassword = ref(false);
+		const toast = useToast();
 		const formValues = {
 			email: '',
 			password: '',
 			first_name: '',
 			last_name: '',
 			username: '',
-			confirmPassword: ''
+			confirmPassword: '',
+			gender: 'male',
+			inputChecked: false
 		};
-		const { handleSubmit, isSubmitting, errors } = useForm({
+		const { handleSubmit, isSubmitting, errors, resetForm } = useForm({
 			initialValues: formValues,
 			validationSchema: registerSchema
 		});
@@ -203,10 +253,22 @@ export default defineComponent({
 		const { value: username } = useField('username');
 		const { value: password } = useField('password');
 		const { value: confirmPassword } = useField('confirmPassword');
-		const onHandleSubmit = handleSubmit(async value => {
-			return new Promise((acc, val) => {
-				setTimeout(acc, 2000);
-			});
+		const { value: gender } = useField('gender');
+		const { value: inputChecked } = useField('inputChecked');
+
+		const { mutate } = useMutation(regsiterMutation);
+		const onHandleSubmit = handleSubmit(async val => {
+			try {
+				const userData = await mutate({
+					input: omit(val, ['confirmPassword', 'inputChecked'])
+				});
+				toast.success('successfuly Register');
+				resetForm();
+				router.push({ name: 'verify-email-page' });
+				return userData;
+			} catch (err) {
+				toast.error(err.message);
+			}
 		});
 		return {
 			showPassword,
@@ -219,7 +281,9 @@ export default defineComponent({
 			first_name,
 			last_name,
 			username,
-			confirmPassword
+			confirmPassword,
+			gender,
+			inputChecked
 		};
 	},
 	components: {

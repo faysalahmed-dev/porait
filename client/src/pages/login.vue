@@ -103,22 +103,51 @@ import { defineComponent, ref } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import UserIcon from '../components/utils/user-icon.vue';
 import { loginSchema } from '../utils/schema';
+import { useMutation } from '@vue/apollo-composable';
+import { useToast } from 'vue-toastification';
+import { useRouter } from 'vue-router';
+import { loginMutation } from '../typeDefs/index';
 
 export default defineComponent({
 	setup() {
 		const showPassword = ref(false);
+		const toast = useToast();
+		const router = useRouter();
+
 		const formValues = {
 			email: '',
 			password: ''
 		};
-		const { handleSubmit, isSubmitting, errors } = useForm({
+		const { handleSubmit, isSubmitting, errors, resetForm } = useForm({
 			initialValues: formValues,
 			validationSchema: loginSchema
 		});
 		const { value: email } = useField('email');
 		const { value: password } = useField('password');
+
+		const { mutate } = useMutation(loginMutation);
+
 		const onHandleSubmit = handleSubmit(async value => {
-			console.log(value);
+			try {
+				const userData = await mutate({ input: value });
+				toast.success('successfuly Login');
+				resetForm();
+				if (!userData.data.login.email_verified) {
+					router.push({
+						name: 'verify-email-page',
+						state: {
+							message:
+								"Your account doesn't active yet. please confirm your email address."
+						}
+					});
+				} else {
+					router.push({ name: 'home-page' });
+				}
+				return userData;
+			} catch (err) {
+				console.log(err);
+				toast.error(err.message);
+			}
 		});
 		return { showPassword, onHandleSubmit, isSubmitting, errors, email, password };
 	},
@@ -127,3 +156,6 @@ export default defineComponent({
 	}
 });
 </script>
+
+function loginGqlTag(loginGqlTag: any): { mutate: any; } { throw new Error('Function not
+implemented.'); }

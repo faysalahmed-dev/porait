@@ -10,8 +10,7 @@
 				<div
 					class="font-bold py-4 px-2 text-lg capitalize text-center leading-8 flex items-center"
 				>
-					We Just send you confirmation email to your email address. please
-					check you inbox or spam folder.
+					{{ message }}
 				</div>
 				<div class="w-44 bg-green-200 flex items-center justify-center">
 					<div v-if="count < 60" class="text-center font-bold capitalize">
@@ -34,29 +33,35 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 export default defineComponent({
-	data() {
-		return {
-			count: 60
-		};
-	},
-	methods: {
-		start() {
+	setup(props) {
+		const router = useRouter();
+		const count = ref(0);
+
+		function start() {
 			const interval = setInterval(() => {
-				if (this.count <= 0) {
-					this.count = 60;
+				if (count.value <= 0) {
+					count.value = 60;
 					clearInterval(interval);
 				} else {
-					this.count--;
+					count.value--;
 				}
 			}, 1000);
-		},
-		startCountDown() {
-			if (this.count === 60) {
-				this.start();
+		}
+		function startCountDown() {
+			if (count.value === 60) {
+				start();
 			}
 		}
+		return {
+			message:
+				router.options.history.state.message ||
+				`We Just send you confirmation email to your email address. please check you inbox or spam folder.`,
+			startCountDown
+		};
 	}
 });
 </script>
