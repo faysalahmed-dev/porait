@@ -4,7 +4,6 @@ import moment from 'moment';
 import bycript from 'bcryptjs';
 import { promisify } from 'util';
 import _ from 'lodash';
-import isJWT from 'validator/lib/isJWT';
 
 export const getTime = () => Date.now() + moment.duration(90, 'days').asMilliseconds();
 
@@ -46,11 +45,9 @@ export async function verifyAuthToken(context: Context) {
 	// console.log(authHeader);
 	const conditions =
 		authHeader &&
-		authHeader.startsWith('Bearer ') &&
-		isJWT(authHeader.replace('Bearer ', ''));
+		authHeader.startsWith('Bearer ');
 	if (conditions) {
 		const token = authHeader.replace('Bearer ', '');
-		console.log(token);
 		const decoded = await verifyToken(token);
 		if (decoded.id) {
 			const user = await context.prisma.user.findFirst({
