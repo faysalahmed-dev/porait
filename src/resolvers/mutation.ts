@@ -161,12 +161,13 @@ const UserResolver: IResolvers = {
 	async login(parent, args: { data: ILoginInput }, context: Context) {
 		try {
 			await loginSchema.validate(args.data);
-			const dataObj = { password: args.data.password } as ILoginInput;
+			const { password, email, username } = args.data;
+			const dataObj = { password } as ILoginInput;
 
-			if (args.data.email && args.data.username.length === 0) {
-				dataObj.email = args.data.email.toLowerCase();
+			if (email && !username) {
+				dataObj.email = email.toLowerCase();
 			} else {
-				dataObj.username = args.data.username;
+				dataObj.username = username;
 			}
 			const queryFor = 'email' in dataObj ? 'email' : 'username';
 			const user = await context.prisma.user.findUnique({
