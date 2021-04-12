@@ -11,13 +11,15 @@ import { getClientIp } from 'request-ip';
 import geoIp from 'geoip-lite';
 import moment from 'moment';
 import { decode } from 'jsonwebtoken';
-import isIp from 'validator/lib/isIP';
-import isEmail from 'validator/lib/isEmail';
-import isEmpty from 'validator/lib/isEmpty';
 import eamilSender, { genEmailToken } from '../helpers/email';
 import _ from 'lodash';
 import { getUserAgent } from '../helpers/utils';
 import url from 'url';
+import {
+	loginSchema,
+	registerSchema,
+	verifyPasswordResetToken
+} from '../utils/validatorSchema';
 
 enum Gender {
 	'male',
@@ -63,6 +65,7 @@ const UserResolver: IResolvers = {
 		try {
 			// will remove this line
 			await context.prisma.user.deleteMany({});
+			await registerSchema.validate(args.data);
 			const {
 				email,
 				password,
@@ -71,7 +74,6 @@ const UserResolver: IResolvers = {
 				last_name,
 				gender
 			} = args.data;
-
 			// check user already exits
 			const userExits = await context.prisma.user.findFirst({
 				where: {
@@ -118,7 +120,7 @@ const UserResolver: IResolvers = {
 			const ip_address = getClientIp(context.request);
 			// get user location details from ip addess -> city, timezone, area
 			let details = {};
-			if (isIp(ip_address)) {
+			if (ip_address) {
 				details = geoIp.lookup(ip_address) || {};
 			}
 			const expires_at = decode(token) as { id: string; exp: string; iat: string };
@@ -158,9 +160,10 @@ const UserResolver: IResolvers = {
 	},
 	async login(parent, args: { data: ILoginInput }, context: Context) {
 		try {
+			await loginSchema.validate(args.data);
 			const dataObj = { password: args.data.password } as ILoginInput;
 
-			if (isEmail(args.data.email || '') && isEmpty(args.data.username || '')) {
+			if (args.data.email && args.data.username.length === 0) {
 				dataObj.email = args.data.email.toLowerCase();
 			} else {
 				dataObj.username = args.data.username;
@@ -182,7 +185,7 @@ const UserResolver: IResolvers = {
 					const token = await getToken(user.id);
 					const ip_address = getClientIp(context.request);
 					let details = {};
-					if (isIp(ip_address)) {
+					if (ip_address) {
 						details = geoIp.lookup(ip_address) || {};
 					}
 					const expires_at = decode(token) as {
@@ -218,6 +221,7 @@ const UserResolver: IResolvers = {
 	},
 	async forgetPassword(parent, args: { data: { email: string } }, context: Context) {
 		try {
+			await loginSchema.pick(['email']).validate(args.data);
 			const hasUser = await context.prisma.user.findUnique({
 				where: { email: args.data.email }
 			});
@@ -260,10 +264,12 @@ const UserResolver: IResolvers = {
 		{ prisma }: Context
 	) {
 		try {
+			await verifyPasswordResetToken.validate(args.data);
 			const user = await prisma.user.findFirst({
 				where: { id: args.data.user_id }
 			});
-			if (user && typeof user.password_reset_token === 'string') {
+
+			if (user && _.isString(user.password_reset_token)) {
 				const resetTokenObj = JSON.parse(
 					user.password_reset_token
 				) as PasswordResetObj;
@@ -298,6 +304,7 @@ const UserResolver: IResolvers = {
 	},
 	async verifyEmail(parent, args: { data: EmailVerify }, { prisma }: Context) {
 		try {
+			await verifyPasswordResetToken.omit(['password']).validate(args.data);
 			const user = await prisma.user.findFirst({
 				where: { id: args.data.user_id }
 			});
@@ -331,6 +338,7 @@ const UserResolver: IResolvers = {
 	},
 	async resendVerifyEmailToken(parent, args: { data: EmailVerify }, context: Context) {
 		try {
+			await verifyPasswordResetToken.omit(['password']).validate(args.data);
 			const user = await verifyAuthToken(context);
 			const resetUrl = `${context.request.headers.host}/verify-email?email_token=${user.email_verify_token}&user_id=${user.id}`;
 
