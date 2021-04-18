@@ -1,4 +1,4 @@
-import { Context } from './../../prisma';
+import { Context } from '../../prisma';
 import { IResolvers } from 'graphql-tools';
 import {
 	getToken,

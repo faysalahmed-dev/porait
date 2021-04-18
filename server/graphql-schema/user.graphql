@@ -24,22 +24,12 @@ type User {
 	images: String
 	address: String
 	gender: Gender!
-}
-
-type UserResult {
-	id: ID!
-	first_name: String!
-	last_name: String!
-	username: String!
-	email: String!
-	email_verified: Boolean!
-	images: String
-	token: String!
-	gender: Gender!
+	token: String
 }
 
 type Query {
 	user: User
+	authUser: User!
 }
 
 input RegisterInput {
@@ -70,8 +60,8 @@ input EmailVerifyInput {
 	token: String!
 }
 type Mutation {
-	register(data: RegisterInput!): UserResult!
-	login(data: LoginInput!): UserResult!
+	register(data: RegisterInput!): User!
+	login(data: LoginInput!): User!
 	forgetPassword(data: ForgetPassword!): String!
 	verifyPasswordResetToken(data: VerifyPasswordResetTokenInput!): String
 	verifyEmail(data: EmailVerifyInput!): String

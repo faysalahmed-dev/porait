@@ -5,7 +5,7 @@ import { GraphQLFileLoader, addResolversToSchema, loadSchemaSync } from 'graphql
 import path from 'path';
 import serveStatic from 'serve-static';
 
-const filePath = path.join(__dirname, 'src', 'graphql-schema', 'schema.graphql');
+const filePath = path.join(__dirname, 'graphql-schema', 'schema.graphql');
 const schema = loadSchemaSync(filePath, {
 	loaders: [new GraphQLFileLoader()]
 });

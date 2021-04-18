@@ -1,4 +1,4 @@
-import { Context } from './../../prisma';
+import { Context } from '../../prisma';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
 import bycript from 'bcryptjs';
@@ -43,9 +43,7 @@ export async function verifyAuthToken(context: Context) {
 
 	//  check token
 	// console.log(authHeader);
-	const conditions =
-		authHeader &&
-		authHeader.startsWith('Bearer ');
+	const conditions = authHeader && authHeader.startsWith('Bearer ');
 	if (conditions) {
 		const token = authHeader.replace('Bearer ', '');
 		const decoded = await verifyToken(token);
