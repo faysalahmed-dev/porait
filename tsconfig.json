@@ -5,10 +5,7 @@
 		"strict": true,
 		"lib": ["esnext"],
 		"esModuleInterop": true,
-		"typeRoots": ["node_modules/@types", "src/@types"],
+		"typeRoots": ["node_modules/@types", "server/src/@types"]
 	},
-	"exclude": [
-    	"node_modules",
-		"client"
-  	]
+	"exclude": ["node_modules", "client"]
 }
