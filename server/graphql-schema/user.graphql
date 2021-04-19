@@ -66,4 +66,6 @@ type Mutation {
 	verifyPasswordResetToken(data: VerifyPasswordResetTokenInput!): String
 	verifyEmail(data: EmailVerifyInput!): String
 	resendVerifyEmailToken(user_id: String!): String
+	logoutUser: String
+	logoutAllUser: String
 }

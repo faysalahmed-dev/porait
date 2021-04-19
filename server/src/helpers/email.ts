@@ -15,7 +15,7 @@ interface EmailInfo {
 }
 
 export const genEmailToken = (size = 90) => {
-	return crypto.randomBytes(size).toString('base64').slice(0, size);
+	return crypto.createHash('sha512').update(crypto.randomBytes(32).toString('hex')).digest('hex');
 };
 
 class Email {

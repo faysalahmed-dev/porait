@@ -1,4 +1,6 @@
 import useragent from 'useragent';
+import url from 'url';
+
 
 function getVersion(str: string) {
 	const version = str.match(/(\d+.\d+.\d+)/g);
@@ -18,4 +20,11 @@ export function getUserAgent(agent: string) {
 		/(\d+.\d+.\d+)/,
 		getVersion(os)
 	)}`.trim();
+}
+
+export function getHostUrl(request: any) {
+	return url.format({
+		protocol: request.protocol,
+		host: request.get('host')
+	});
 }

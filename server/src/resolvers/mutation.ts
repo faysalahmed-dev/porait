@@ -13,7 +13,7 @@ import moment from 'moment';
 import { decode } from 'jsonwebtoken';
 import eamilSender, { genEmailToken } from '../helpers/email';
 import _ from 'lodash';
-import { getUserAgent } from '../helpers/utils';
+import { getUserAgent, getHostUrl } from '../helpers/utils';
 import url from 'url';
 import {
 	loginSchema,
@@ -89,10 +89,7 @@ const UserResolver: IResolvers = {
 			// hash the user password
 			const hashedPassword = await hashPassword(password);
 			// get app url(server)
-			const hostUrl = url.format({
-				protocol: context.request.protocol,
-				host: context.request.get('host')
-			});
+			const hostUrl = getHostUrl(context.request);
 			// genrate email verify token
 			const emailVerifyToken = genEmailToken();
 
@@ -228,7 +225,8 @@ const UserResolver: IResolvers = {
 			});
 			if (hasUser) {
 				const hashToken = genEmailToken();
-				const resetUrl = `${context.request.headers.host}/password-reset?token=${hashToken}&user_id=${hasUser.id}`;
+				const hostUrl = getHostUrl(context.request);
+				const resetUrl = `${hostUrl}/password-reset?token=${hashToken}&user_id=${hasUser.id}`;
 				await context.prisma.user.update({
 					where: { email: args.data.email },
 					data: {
@@ -337,11 +335,16 @@ const UserResolver: IResolvers = {
 			throw err;
 		}
 	},
-	async resendVerifyEmailToken(parent, args: { data: EmailVerify }, context: Context) {
+	async resendVerifyEmailToken(parent, args, context: Context) {
 		try {
-			await verifyPasswordResetToken.omit(['password']).validate(args.data);
 			const user = await verifyAuthToken(context);
-			const resetUrl = `${context.request.headers.host}/verify-email?email_token=${user.email_verify_token}&user_id=${user.id}`;
+
+			if (user.email_verified) {
+				throw new Error('email already verified');
+			}
+
+			const hostUrl = getHostUrl(context.request);
+			const resetUrl = `${hostUrl}/verify-email?email_token=${user.email_verify_token}&user_id=${user.id}`;
 
 			await eamilSender.sendMail({
 				from: 'support@porait.com',
@@ -352,6 +355,54 @@ const UserResolver: IResolvers = {
 					data: { resetUrl }
 				}
 			});
+		} catch (err) {
+			console.log(err);
+			throw err;
+		}
+	},
+	async logoutUser(parent, args, context: Context) {
+		try {
+			const user = await verifyAuthToken(context);
+
+			const authHeader = context.connection
+				? context.connection.context.authorization
+				: context.request.headers.authorization;
+			const token = authHeader.replace('Bearer ', '');
+			const result = await context.prisma.user.update({
+				where: { id: user.id },
+				data: {
+					tokens: {
+						deleteMany: {
+							token
+						}
+					}
+				},
+				include: {
+					tokens: true
+				}
+			});
+			console.log(result);
+			return 'logout successfuly';
+		} catch (err) {
+			console.log(err);
+			throw err;
+		}
+	},
+	async logoutAllUser(parent, args, context: Context) {
+		try {
+			const user = await verifyAuthToken(context);
+			await context.prisma.user.update({
+				where: { id: user.id },
+				data: {
+					tokens: {
+						deleteMany: {}
+					}
+				},
+				include: {
+					tokens: true
+				}
+			});
+			return 'all user logout successfuly';
 		} catch (err) {
 			console.log(err);
 			throw err;
