@@ -103,59 +103,66 @@ import { defineComponent, ref } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import UserIcon from '../components/utils/user-icon.vue';
 import { loginSchema } from '../utils/schema';
-import { useMutation } from '@vue/apollo-composable';
+import { useMutation } from '@urql/vue';
 import { useToast } from 'vue-toastification';
-import { useRouter } from 'vue-router';
-import { loginMutation } from '../typeDefs/index';
+import { useRoute, useRouter } from 'vue-router';
+import { LOGIN_USER } from '../typeDefs/index';
 
 export default defineComponent({
 	setup() {
 		const showPassword = ref(false);
 		const toast = useToast();
 		const router = useRouter();
-
+		const route = useRoute();
 		const formValues = {
 			email: '',
 			password: ''
 		};
-		const { handleSubmit, isSubmitting, errors, resetForm } = useForm({
+		const { handleSubmit, errors, resetForm } = useForm({
 			initialValues: formValues,
 			validationSchema: loginSchema
 		});
 		const { value: email } = useField('email');
 		const { value: password } = useField('password');
 
-		const { mutate } = useMutation(loginMutation);
+		const { executeMutation, fetching: isSubmitting } = useMutation(LOGIN_USER);
 
-		const onHandleSubmit = handleSubmit(async value => {
-			try {
-				const userData = await mutate({ input: value });
-				toast.success('successfuly Login');
-				resetForm();
-				if (!userData.data.login.email_verified) {
-					router.push({
-						name: 'verify-email-page',
-						state: {
-							message:
-								"Your account doesn't active yet. please confirm your email address."
-						}
-					});
+		const onHandleSubmit = handleSubmit(value => {
+			executeMutation({ input: value }).then(result => {
+				if (result.error) {
+					console.error(result.error);
+					toast.error(result.error.message);
 				} else {
-					router.push({ name: 'home-page' });
+					toast.success('successfuly Login');
+					resetForm();
+					if (!result.data.login.email_verified) {
+						router.push({
+							name: 'verify-email-page',
+							state: {
+								titleMessage: 'Account Not Active Yet',
+								subMessage: 'please confirm your email address'
+							}
+						});
+					} else {
+						const callback = route.query.callback;
+						const redir = typeof callback === 'string' ? callback : '/';
+						router.push(redir);
+					}
+					window.localStorage.setItem('token', result.data.login.token);
 				}
-				return userData;
-			} catch (err) {
-				console.log(err);
-				toast.error(err.message);
-			}
+			});
 		});
-		return { showPassword, onHandleSubmit, isSubmitting, errors, email, password };
+		return {
+			showPassword,
+			onHandleSubmit,
+			isSubmitting,
+			errors,
+			email,
+			password
+		};
 	},
 	components: {
 		UserIcon
 	}
 });
 </script>
-
-function loginGqlTag(loginGqlTag: any): { mutate: any; } { throw new Error('Function not
-implemented.'); }

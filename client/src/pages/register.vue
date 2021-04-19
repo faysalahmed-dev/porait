@@ -220,12 +220,11 @@ import { useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import UserIcon from '../components/utils/user-icon.vue';
 import { registerSchema } from '../utils/schema';
-import { useMutation } from '@vue/apollo-composable';
+import { useMutation } from '@urql/vue';
 import gql from 'graphql-tag';
 import omit from 'lodash/omit';
-// @ts-ignore
 import { useToast } from 'vue-toastification';
-import { regsiterMutation } from '../typeDefs';
+import { REGISTER_USER } from '../typeDefs';
 
 export default defineComponent({
 	setup() {
@@ -243,7 +242,7 @@ export default defineComponent({
 			gender: 'male',
 			inputChecked: false
 		};
-		const { handleSubmit, isSubmitting, errors, resetForm } = useForm({
+		const { handleSubmit, errors, resetForm } = useForm({
 			initialValues: formValues,
 			validationSchema: registerSchema
 		});
@@ -256,19 +255,20 @@ export default defineComponent({
 		const { value: gender } = useField('gender');
 		const { value: inputChecked } = useField('inputChecked');
 
-		const { mutate } = useMutation(regsiterMutation);
-		const onHandleSubmit = handleSubmit(async val => {
-			try {
-				const userData = await mutate({
-					input: omit(val, ['confirmPassword', 'inputChecked'])
-				});
-				toast.success('successfuly Register');
-				resetForm();
-				router.push({ name: 'verify-email-page' });
-				return userData;
-			} catch (err) {
-				toast.error(err.message);
-			}
+		const { executeMutation, fetching: isSubmitting } = useMutation(REGISTER_USER);
+		const onHandleSubmit = handleSubmit(val => {
+			executeMutation({
+				input: omit(val, ['confirmPassword', 'inputChecked'])
+			}).then(result => {
+				if (result.error) {
+					toast.error(result.error.message);
+				} else {
+					toast.success('successfuly Register');
+					resetForm();
+					router.push({ name: 'verify-email-page' });
+					window.localStorage.setItem('token', result.data.register.token);
+				}
+			});
 		});
 		return {
 			showPassword,
