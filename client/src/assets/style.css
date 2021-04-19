@@ -60,11 +60,6 @@ body {
 	@apply inline-block text-green-500 border-b-2 border-green-500 font-bold mx-auto hover:text-green-600;
 }
 
-.loader .loader-inner > div {
-	width: 10px;
-	height: 10px;
-}
-
 button:disabled {
 	opacity: 0.8;
 	pointer-events: none;
