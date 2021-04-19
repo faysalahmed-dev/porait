@@ -18,7 +18,13 @@
 					class="search-input"
 				/>
 			</div>
-			<div v-if="true">
+			<PopOver
+				v-if="!!user"
+				:user="user"
+				:loading="logouting"
+				@logoutUser="logoutUser"
+			/>
+			<div v-else>
 				<router-link to="/login" class="btn-green mt-4 md:mt-0 ml-4">
 					Login
 				</router-link>
@@ -26,80 +32,72 @@
 					Register
 				</router-link>
 			</div>
-			<div
-				v-else
-				class="flex items-center ml-3 py-1 px-2 bg-green-200 rounded-full cursor-pointer relative"
-				@click="showModel = !showModel"
-			>
-				<span class="inline-block font-bold mr-3">Faysal Ahmed</span>
-				<div
-					class="w-12 h-12 border-2 border-green-500 rounded-full overflow-hidden"
-				>
-					<img
-						src="@/assets/faysal.jpg"
-						alt=""
-						class="block h-full object-cover w-full"
-					/>
-				</div>
-				<span
-					class="absolute -bottom-1 left-1/2"
-					style="transform: translateX(-50%)"
-					><i class="eva eva-arrow-down eva-lg"></i
-				></span>
-				<ul
-					v-show="showModel"
-					class="absolute bg-green-300 px-3 py-4 rounded shadow-md space-y-5 w-44 font-bold"
-					style="top: 100%"
-				>
-					<li>
-						<i
-							class="eva inline-block eva-lg -mt-1 eva-layout-outline translate-y-0.5 transform"
-							style="transform: translateY(3px)"
-						></i>
-						<span class="ml-2">Posts</span>
-					</li>
-					<li>
-						<i
-							class="eva inline-block eva-lg -mt-1 eva-message-circle-outline translate-y-0.5 transform"
-							style="transform: translateY(3px)"
-						></i>
-						<span class="ml-2">Comments</span>
-					</li>
-					<li>
-						<i
-							class="eva inline-block eva-lg -mt-1 eva-person-outline translate-y-0.5 transform"
-							style="transform: translateY(3px)"
-						></i>
-						<span class="ml-2">Profile</span>
-					</li>
-					<li>
-						<i
-							class="eva inline-block eva-lg -mt-1 eva-settings-2-outline"
-							style="transform: translateY(3px)"
-						></i>
-						<span class="ml-2">Setting</span>
-					</li>
-					<li>
-						<i
-							class="eva inline-block eva-lg -mt-1 eva-log-out-outline"
-							style="transform: translateY(3px)"
-						></i>
-						<span class="ml-2">Logout</span>
-					</li>
-				</ul>
-			</div>
 		</div>
 	</header>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, inject, computed } from 'vue';
+import _ from 'lodash';
+import { IUser } from '../utils/interface';
+import { useRouter } from 'vue-router';
+import { useMutation } from '@urql/vue';
+import { LOGOUT_USER } from '../typeDefs/auth';
+import { useToast } from 'vue-toastification';
+import PopOver from './utils/pop-over.vue';
+
 export default defineComponent({
 	setup() {
 		const showModel = ref(false);
+		const router = useRouter();
+		const toast = useToast();
+		const authUser = inject<{ value: { authUser: IUser } }>('authUser');
+		const { executeMutation, fetching: logouting } = useMutation(LOGOUT_USER);
+		const user = computed(() => {
+			if (authUser!.value) {
+				return {
+					name:
+						authUser!.value.authUser.first_name.trim() +
+						' ' +
+						authUser!.value.authUser.last_name.trim(),
+					image: JSON.parse(authUser!.value.authUser.images).avater
+				};
+			} else {
+				return null;
+			}
+		});
+		async function logoutUser() {
+			try {
+				await executeMutation({});
+				toast.success('Logout Successful');
+				window.localStorage.clear();
+				window.location.href = '/';
+			} catch (err) {
+				console.log(err);
+				toast.success('Unable to Logout');
+			}
+		}
 		return {
-			showModel
+			showModel,
+			user,
+			logoutUser,
+			logouting
 		};
-	}
+	},
+	components: { PopOver }
 });
 </script>
+
+<style>
+.loading-spiner {
+	width: 20px !important;
+	height: 20px !important;
+	margin-left: 10px;
+}
+header ul li {
+	transition: all 0.2 ease-in-out;
+}
+header ul li:hover {
+	box-shadow: 0px 0px 4px 0px #0000003d;
+}
+</style>
