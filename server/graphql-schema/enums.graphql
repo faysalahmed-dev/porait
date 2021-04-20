@@ -1,0 +1,10 @@
+enum Gender {
+	male
+	female
+	other
+}
+
+enum FileType {
+	avater
+	cover
+}
