@@ -1,8 +1,7 @@
-enum Gender {
-	male
-	female
-	other
-}
+#import * from "user-inputs.graphql"
+#import * from "enums.graphql"
+
+scalar Upload
 
 type Token {
 	token_id: ID!
@@ -14,6 +13,12 @@ type Token {
 	device: String
 }
 
+type Image {
+	avater: String!
+	cover: String!
+	uploaded: [String]
+}
+
 type User {
 	id: ID!
 	first_name: String!
@@ -21,10 +26,14 @@ type User {
 	username: String!
 	email: String!
 	email_verified: Boolean!
-	images: String
+	images: Image!
 	address: String
 	gender: Gender!
 	token: String
+}
+
+type File {
+	url: String
 }
 
 type Query {
@@ -32,33 +41,6 @@ type Query {
 	authUser: User!
 }
 
-input RegisterInput {
-	first_name: String!
-	last_name: String!
-	username: String!
-	email: String!
-	password: String!
-	gender: Gender!
-}
-
-input LoginInput {
-	email: String!
-	password: String!
-}
-
-input ForgetPassword {
-	email: String!
-}
-
-input VerifyPasswordResetTokenInput {
-	user_id: String!
-	token: String!
-	password: String!
-}
-input EmailVerifyInput {
-	user_id: String!
-	token: String!
-}
 type Mutation {
 	register(data: RegisterInput!): User!
 	login(data: LoginInput!): User!
@@ -68,4 +50,6 @@ type Mutation {
 	resendVerifyEmailToken(user_id: String!): String
 	logoutUser: String
 	logoutAllUser: String
+	updateUser(data: UserUpdate!): User!
+	uploadImage(type: FileType!, file: Upload!): String!
 }
