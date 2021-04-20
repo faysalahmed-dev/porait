@@ -52,7 +52,7 @@ model Token {
   created_at DateTime @default(now())
   expires_at DateTime
   agent      Json?
-  user       User?     @relation(fields: [user_id], references: [id])
+  user       User?    @relation(fields: [user_id], references: [id])
   user_id    String?
 }
 
@@ -75,11 +75,20 @@ model User {
   password_reset_token Json?
   active               Boolean   @default(true)
   tokens               Token[]
-  images               Json?
+  images               Image?
   gender               Gender
   address              String?
   created_at           DateTime  @default(now())
   updated_at           DateTime  @updatedAt
   save_post            Post[]
   comments             Comment[]
+}
+
+model Image {
+  id       String   @id @default(uuid())
+  avater   String
+  uploaded String[]
+  cover    String
+  user     User?    @relation(fields: [user_id], references: [id])
+  user_id  String?
 }

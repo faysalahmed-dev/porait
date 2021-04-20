@@ -9,13 +9,6 @@ prisma
 	.then(() => console.log('database connected'))
 	.catch(err => console.log(err));
 
-// declare global {
-// 	namespace NodeJS {
-// 		interface Global {
-// 			prisma: typeof prisma;
-// 		}
-// 	}
-// }
 export interface Context {
 	prisma: PrismaClient;
 	request: any;
