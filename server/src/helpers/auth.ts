@@ -51,7 +51,8 @@ export async function verifyAuthToken(context: Context) {
 			const user = await context.prisma.user.findFirst({
 				where: { id: decoded.id },
 				include: {
-					tokens: true
+					tokens: true,
+					images: true
 				}
 			});
 			if (!user) throw new Error('user not found');
