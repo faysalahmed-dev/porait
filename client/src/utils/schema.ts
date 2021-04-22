@@ -34,7 +34,11 @@ const registerSchema = yup.object({
 	email: emailSchema,
 	password: passwordSchema,
 	confirmPassword: confirmPasswordSchema,
-	inputChecked: yup.boolean().isTrue()
+	inputChecked: yup.boolean().isTrue(),
+	gender: yup
+		.string()
+		.required()
+		.matches(/(male|female|other)/, 'invalid gender type provided')
 });
 const forgetPasswordSchema = yup.object({ email: emailSchema });
 const resetPasswordSchema = yup.object({
