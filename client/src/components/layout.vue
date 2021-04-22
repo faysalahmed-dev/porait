@@ -3,23 +3,16 @@
 		v-if="loading"
 		class="h-screen w-screen fixed flex flex-col justify-center items-center"
 	>
-		<h2 class="text-green-500 inline-block font-extrabold text-5xl mb-16">
-			<span class="text-gray-800">P</span>orait
+		<h2 class="text-green-300 inline-block font-extrabold text-5xl mb-16">
+			<span class="text-yellow-200">P</span>orait
 		</h2>
-		<div class="loader">
-			<div class="loader-inner ball-spin-fade-loader">
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
+		<div class="loader page-loading-spiner">
+			<div class="loader-inner semi-circle-spin mx-auto">
 				<div></div>
 			</div>
 		</div>
 	</div>
-	<div v-else class="flex flex-col min-h-screen">
+	<div v-else class="flex flex-col min-h-screen p-6">
 		<Header />
 		<main class="flex-grow">
 			<slot></slot>
@@ -45,8 +38,9 @@ export default defineComponent({
 });
 </script>
 
-<style>
-.ball-spin-fade-loader > div {
-	background-color: theme('backgroundColor.green.500') !important;
+<style scoped>
+.page-loading-spiner .loader-inner {
+	width: 50px;
+	height: 50px;
 }
 </style>
