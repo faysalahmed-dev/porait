@@ -5,7 +5,7 @@
 		<Popover v-slot="{ open }" class="relative">
 			<PopoverButton
 				:class="open ? '' : 'text-opacity-90'"
-				class="inline-flex items-center px-3 py-2 text-base font-medium text-gray-800 rounded-md group hover:text-opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+				class="inline-flex items-center px-3 rounded-md group hover:text-opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 text-gray-700"
 			>
 				<span class="inline-block font-bold mr-3 capitalize">{{
 					user.name
