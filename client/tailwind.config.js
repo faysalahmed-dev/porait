@@ -1,7 +1,12 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
-	purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+	purge: {
+		content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+		options: {
+			safelist: [/data-theme$/]
+		}
+	},
 	presets: [],
 	darkMode: false, // or 'media' or 'class'
 	theme: {
@@ -36,6 +41,9 @@ module.exports = {
 			// rose: colors.rose,
 			// fuchsia: colors.fuchsia,
 			// pink: colors.pink,
+		},
+		extends: {
+			colors: require('daisyui/colors')
 		},
 		spacing: {
 			px: '1px',
@@ -1021,5 +1029,10 @@ module.exports = {
 		wordBreak: ['responsive'],
 		zIndex: ['responsive', 'focus-within', 'focus']
 	},
-	plugins: []
+	plugins: [require('daisyui')],
+	daisyui: {
+		styled: true,
+		themes: true,
+		rtl: true
+	}
 };
