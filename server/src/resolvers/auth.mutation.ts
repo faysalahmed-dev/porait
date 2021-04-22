@@ -20,7 +20,7 @@ import {
 	verifyPasswordResetToken
 } from '../utils/validatorSchema';
 
-import { IUserData } from '../@types/user';
+import { IUserData, IUserTokenDecode } from '../@types/user';
 
 type MyEnum = 'email' | 'username';
 
@@ -51,8 +51,6 @@ interface PasswordResetObj {
 export const authResolvers: IResolvers = {
 	async register(parent, args: { data: IUserData }, context: Context) {
 		try {
-			// will remove this line
-			await context.prisma.user.deleteMany({});
 			await registerSchema.validate(args.data);
 			const {
 				email,
@@ -113,7 +111,7 @@ export const authResolvers: IResolvers = {
 			if (ip_address) {
 				details = geoIp.lookup(ip_address) || {};
 			}
-			const expires_at = decode(token) as { id: string; exp: string; iat: string };
+			const expires_at = decode(token) as IUserTokenDecode;
 			// save genarated token
 			await context.prisma.user.update({
 				where: { id: user.id },
@@ -163,7 +161,8 @@ export const authResolvers: IResolvers = {
 			const user = await context.prisma.user.findUnique({
 				where: {
 					[queryFor]: dataObj[queryFor]
-				}
+				},
+				include: {images: true}
 			});
 			if (!user) {
 				throw new Error('user not found');
@@ -272,13 +271,21 @@ export const authResolvers: IResolvers = {
 					} else {
 						const hashedPassword = await hashPassword(args.data.password);
 						await prisma.user.update({
+							include: {
+								tokens: true
+							},
 							where: {
 								id: user.id
 							},
 							data: {
 								password: hashedPassword,
 								password_reset_token: null,
-								password_changed_at: new Date().toISOString()
+								password_changed_at: new Date().toISOString(),
+								tokens: {
+									deleteMany: {
+										user_id: user.id
+									}
+								}
 							}
 						});
 						return 'password updated';
@@ -361,7 +368,7 @@ export const authResolvers: IResolvers = {
 				? context.connection.context.authorization
 				: context.request.headers.authorization;
 			const token = authHeader.replace('Bearer ', '');
-			const result = await context.prisma.user.update({
+			await context.prisma.user.update({
 				where: { id: user.id },
 				data: {
 					tokens: {
@@ -374,7 +381,6 @@ export const authResolvers: IResolvers = {
 					tokens: true
 				}
 			});
-			console.log(result);
 			return 'logout successfuly';
 		} catch (err) {
 			console.log(err);
@@ -384,18 +390,29 @@ export const authResolvers: IResolvers = {
 	async logoutAllUser(parent, args, context: Context) {
 		try {
 			const user = await verifyAuthToken(context);
+			const authHeader = context.connection
+				? context.connection.context.authorization
+				: context.request.headers.authorization;
+			const token = authHeader.replace('Bearer ', '');
 			await context.prisma.user.update({
 				where: { id: user.id },
 				data: {
 					tokens: {
-						deleteMany: {}
+						deleteMany: {
+							user_id: user.id,
+							NOT: [
+								{
+									token
+								}
+							]
+						}
 					}
 				},
 				include: {
 					tokens: true
 				}
 			});
-			return 'all user logout successfuly';
+			return 'successfuly loggedout';
 		} catch (err) {
 			console.log(err);
 			throw err;
