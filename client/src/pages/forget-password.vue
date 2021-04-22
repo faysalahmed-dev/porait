@@ -1,42 +1,67 @@
 <template>
 	<default-layout>
-		<form class="container mx-auto py-5 px-3" @submit="onHandleSubmit">
-			<h3 class="font-bold text-lg my-4 text-green-500 capitalize">
-				To Recover Your account please search your account bia email address
-			</h3>
-			<div
-				v-if="showMessage"
-				class="px-8 py-10 bg-green-200 text-lg font-bold text-gray-800 rounded"
-			>
-				Reset Password Link send to your email address
-			</div>
-			<div class="w-80 mt-5 mx-auto">
-				<div class="relative">
-					<input
-						placeholder="user@email.com"
-						type="text"
-						class="search-input"
-						v-model="email"
-					/>
-				</div>
-				<span v-if="errors.email" class="auth-input-error">
-					{{ errors.email }}
-				</span>
+		<form
+			class="w-96 mt-16 bg-neutral rounded-2xl mx-auto py-8 px-4"
+			@submit="onHandleSubmit"
+		>
+			<div v-if="showMessage" class="text-lg font-bold">
+				<p>Link send to your email address</p>
 				<button
-					class="btn-gray-lg shadow-xl"
-					type="submit"
-					:disabled="isSubmitting"
+					class="btn bg-green-300 text-gray-700 hover:text-white mt-4 btn-block shadow-xl"
+					type="button"
+					@click="showMessage = false"
 				>
-					<div class="loader" v-if="isSubmitting">
-						<div class="loader-inner ball-pulse">
-							<div></div>
-							<div></div>
-							<div></div>
-						</div>
-					</div>
-					<span v-else>Search</span>
+					Search Again
 				</button>
 			</div>
+			<template v-else>
+				<h3 class="font-bold text-lg text-neutral-content capitalize">
+					Enter Your Email
+				</h3>
+				<div class="flex mt-5 mx-auto">
+					<div class="mr-2 flex-1">
+						<div class="form-control w-full">
+							<input
+								type="text"
+								placeholder="user@example.com"
+								class="input input-ghost text-lg"
+								v-model="email"
+							/>
+							<span v-if="errors.email" class="auth-input-error mt-3">
+								{{ errors.email }}
+							</span>
+						</div>
+					</div>
+					<div class="flex-none">
+						<button
+							class="btn btn-square btn-ghost text-white"
+							:disabled="isSubmitting"
+						>
+							<div v-if="isSubmitting" class="loader">
+								<div
+									class="loader-inner auth-loading-spiner semi-circle-spin mx-auto"
+								>
+									<div></div>
+								</div>
+							</div>
+							<svg
+								v-else
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								class="inline-block w-6 h-6 stroke-current"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</div>
+			</template>
 		</form>
 	</default-layout>
 </template>
@@ -53,7 +78,7 @@ export default defineComponent({
 	setup() {
 		const toast = useToast();
 		const showMessage = ref(false);
-		const { handleSubmit, errors, resetForm } = useForm({
+		const { handleSubmit, errors } = useForm({
 			initialValues: { email: '' },
 			validationSchema: forgetPasswordSchema
 		});

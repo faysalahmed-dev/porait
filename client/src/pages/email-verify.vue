@@ -43,9 +43,12 @@
 								class="text-center font-bold capitalize"
 							>
 								<span class="block text-sm">resend after</span>
-								<span class="block text-md text-3xl my-2"
-									>0:{{ count }}</span
-								>
+								<div class="text-md text-3xl py-3 flex items-center">
+									<span class="inline-block"> 00 : </span>
+									<span class="inline-block countdown">
+										<span :style="`--value: ${count}`"></span>
+									</span>
+								</div>
 								<span class="block text-sm">finish</span>
 							</div>
 							<button
@@ -79,7 +82,6 @@ import { useMutation } from '@urql/vue';
 import { RESEND_EMAIL_VERIFY_LINK, VERIFY_EMAIL } from '../typeDefs';
 import { IUser } from '../utils/interface';
 import { useToast } from 'vue-toastification';
-import { result } from 'lodash';
 
 export default defineComponent({
 	setup() {

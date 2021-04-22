@@ -1,92 +1,102 @@
 <template>
 	<default-layout>
-		<form class="container mx-auto py-5 px-3" @submit="onHandleSubmit">
-			<h3 class="font-bold text-lg my-4 text-gray-800 capitalize text-center">
-				Type Your New Password
-			</h3>
-			<div class="w-80 mt-5 mx-auto">
-				<div class="py-2">
-					<span class="auth-input-label">Password</span>
-					<div class="relative">
-						<input
-							id="password"
-							placeholder="................"
-							:type="showPassword ? 'text' : 'password'"
-							class="auth-input"
-							v-model="password"
-						/>
-						<div class="auth-input-icon">
-							<i class="eva eva-lock-outline"></i>
+		<div class="py-20">
+			<div class="bg-neutral mx-auto p-8 rounded-2xl shadow-2xl w-96">
+				<UserIcon class="w-20 h-20 mx-auto text-green-300" />
+				<form class="mt-8" @submit="onHandleSubmit">
+					<h3
+						class="font-bold text-lg my-4 text-neutral-content capitalize text-center"
+					>
+						Type Your New Password
+					</h3>
+					<div class="form-control py-2">
+						<label class="label">
+							<span class="label-text">Password</span>
+						</label>
+						<div class="relative">
+							<input
+								id="password"
+								placeholder="................"
+								:type="showPassword ? 'text' : 'password'"
+								class="auth-input input"
+								v-model="password"
+							/>
+							<div class="auth-input-icon">
+								<i class="eva eva-lock-outline"></i>
+							</div>
+							<div
+								class="absolute right-0 px-3 rounded-lg flex items-center text-2xl leading-5 text-gray-800 bg-white"
+								@click="showPassword = !showPassword"
+								style="top: 2px; bottom: 2px; right: 2px"
+							>
+								<i
+									:class="`eva ${
+										showPassword
+											? 'eva-eye-off-outline'
+											: 'eva-eye-outline'
+									}`"
+								></i>
+							</div>
 						</div>
-						<div
-							class="absolute right-0 px-3 rounded-lg flex items-center text-2xl leading-5 text-gray-800 bg-white"
-							@click="showPassword = !showPassword"
-							style="top: 2px; bottom: 2px; right: 2px"
-						>
-							<i
-								:class="`eva ${
-									showPassword
-										? 'eva-eye-off-outline'
-										: 'eva-eye-outline'
-								}`"
-							></i>
-						</div>
+						<span v-if="errors.password" class="auth-input-error mt-3">
+							{{ errors.password }}
+						</span>
 					</div>
-					<span v-if="errors.password" class="auth-input-error">
-						{{ errors.password }}
-					</span>
-				</div>
-				<div class="py-2">
-					<span class="auth-input-label">Confirm Password</span>
-					<div class="relative">
-						<input
-							id="confirmPassword"
-							placeholder="................"
-							:type="showConfirmPassword ? 'text' : 'password'"
-							class="auth-input"
-							v-model="confirmPassword"
-						/>
-						<div class="auth-input-icon">
-							<i class="eva eva-lock-outline"></i>
+					<div class="form-control py-2">
+						<label class="label">
+							<span class="label-text">Confirm Password</span>
+						</label>
+						<div class="relative">
+							<input
+								id="confirm-password"
+								placeholder="................"
+								:type="showConfirmPassword ? 'text' : 'password'"
+								class="auth-input input"
+								v-model="confirmPassword"
+							/>
+							<div class="auth-input-icon">
+								<i class="eva eva-lock-outline"></i>
+							</div>
+							<div
+								class="absolute right-0 px-3 rounded-lg flex items-center text-2xl leading-5 text-gray-800 bg-white"
+								@click="showConfirmPassword = !showConfirmPassword"
+								style="top: 2px; bottom: 2px; right: 2px"
+							>
+								<i
+									:class="`eva ${
+										showConfirmPassword
+											? 'eva-eye-off-outline'
+											: 'eva-eye-outline'
+									}`"
+								></i>
+							</div>
 						</div>
-						<div
-							class="absolute right-0 px-3 rounded-lg flex items-center text-2xl leading-5 text-gray-800 bg-white"
-							@click="showConfirmPassword = !showConfirmPassword"
-							style="top: 2px; bottom: 2px; right: 2px"
-						>
-							<i
-								:class="`eva ${
-									showConfirmPassword
-										? 'eva-eye-off-outline'
-										: 'eva-eye-outline'
-								}`"
-							></i>
-						</div>
+						<span v-if="errors.confirmPassword" class="auth-input-error mt-3">
+							{{ errors.confirmPassword }}
+						</span>
 					</div>
-					<span v-if="errors.confirmPassword" class="auth-input-error">
-						{{ errors.confirmPassword }}
-					</span>
-				</div>
-				<button
-					class="btn-gray-lg shadow-xl"
-					type="submit"
-					:disabled="isSubmitting"
-				>
-					<div class="loader" v-if="isSubmitting">
-						<div class="loader-inner ball-pulse">
-							<div></div>
-							<div></div>
-							<div></div>
+					<button
+						class="btn-green-lg shadow-xl"
+						type="submit"
+						:disabled="isSubmitting"
+					>
+						<div v-if="isSubmitting" class="loader">
+							<div
+								class="loader-inner auth-loading-spiner semi-circle-spin mx-auto"
+							>
+								<div></div>
+							</div>
 						</div>
-					</div>
-					<span v-else>Submit</span>
-				</button>
+						<span v-else>Submit</span>
+					</button>
+				</form>
 			</div>
-		</form>
+		</div>
 	</default-layout>
 </template>
 
 <script lang="ts">
+import UserIcon from '../components/utils/user-icon.vue';
 import { defineComponent, ref } from 'vue';
 import { useMutation } from '@urql/vue';
 import { VERIFY_RESET_PASSWORD } from '../typeDefs';
@@ -136,6 +146,15 @@ export default defineComponent({
 			showPassword,
 			showConfirmPassword
 		};
+	},
+	components: {
+		UserIcon
 	}
 });
 </script>
+
+<style scoped>
+input:placeholder {
+	font-size: 30px;
+}
+</style>
