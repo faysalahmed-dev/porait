@@ -1,16 +1,16 @@
 <template>
 	<footer class="text-gray-800 body-font font-bold w-full">
 		<div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
-			<div class="text-gray-800 inline-block font-extrabold text-3xl">
-				<span class="text-green-500">P</span>orait
+			<div class="text-yellow-200 inline-block font-extrabold text-3xl">
+				<span class="text-green-300">P</span>orait
 			</div>
 			<p
-				class="text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4"
+				class="text-neutral-content sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4"
 			>
 				© {{ new Date().getFullYear() }} Porait —
 				<a
 					href="https://github.com/faysal146"
-					class="text-purple-600 ml-1"
+					class="text-teal-300 ml-1"
 					rel="noopener noreferrer"
 					target="_blank"
 					>@faysal</a
@@ -19,7 +19,7 @@
 			<span
 				class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start"
 			>
-				<a class="text-gray-600">
+				<a class="text-gray-500">
 					<svg
 						fill="currentColor"
 						stroke-linecap="round"
@@ -33,7 +33,7 @@
 						></path>
 					</svg>
 				</a>
-				<a class="ml-3 text-gray-600">
+				<a class="ml-3 text-gray-500">
 					<svg
 						fill="currentColor"
 						stroke-linecap="round"
@@ -47,7 +47,7 @@
 						></path>
 					</svg>
 				</a>
-				<a class="ml-3 text-gray-600">
+				<a class="ml-3 text-gray-500">
 					<svg
 						fill="none"
 						stroke="currentColor"
@@ -63,7 +63,7 @@
 						></path>
 					</svg>
 				</a>
-				<a class="ml-3 text-gray-600">
+				<a class="ml-3 text-gray-500">
 					<svg
 						fill="currentColor"
 						stroke="currentColor"
