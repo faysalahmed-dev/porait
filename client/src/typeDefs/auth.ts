@@ -8,7 +8,10 @@ const fragments = {
 			username
 			email
 			email_verified
-			images
+			images {
+				cover
+				avater
+			}
 			token
 			gender
 		}

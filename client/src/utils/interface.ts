@@ -11,6 +11,10 @@ export interface IUser {
 	email: string;
 	address: string;
 	email_verified: boolean;
-	images: string;
+	images: {
+		avater?: string;
+		cover?: string;
+		uploaded?: [string];
+	};
 	gender: Gender;
 }
