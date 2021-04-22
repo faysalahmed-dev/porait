@@ -36,9 +36,27 @@ type File {
 	url: String
 }
 
+type LoggedInDeviceDetails {
+	country: String
+	region: String
+	range: [Int]
+	timezone: String
+	city: String
+	ll: [Float]
+	metro: Int
+	area: Int
+}
+
+type LoggedInDevice {
+	agent: String!
+	ip_address: String!
+	details: LoggedInDeviceDetails
+}
+
 type Query {
 	user: User
 	authUser: User!
+	loggedInDevices: [LoggedInDevice!]
 }
 
 type Mutation {
@@ -52,4 +70,5 @@ type Mutation {
 	logoutAllUser: String
 	updateUser(data: UserUpdate!): User!
 	uploadImage(type: FileType!, file: Upload!): String!
+	updatePassword(data: UpdatePassword!): User!
 }
