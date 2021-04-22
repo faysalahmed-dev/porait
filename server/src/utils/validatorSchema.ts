@@ -25,6 +25,11 @@ const genderSchema = yup
 	.required()
 	.matches(/(male|female|other)/, 'invalid gender type provided');
 
+const addressSchema = yup
+	.string()
+	.required('address requied')
+	.length(5, 'invalid address');
+
 const registerSchema = yup.object().shape({
 	first_name: firstNameSchema,
 	last_name: lastNameSchema,
@@ -45,4 +50,15 @@ const verifyPasswordResetToken = yup.object().shape({
 	password: passwordSchema
 });
 
-export { registerSchema, loginSchema, verifyPasswordResetToken };
+const updatePasswordSchema = yup.object().shape({
+	currentPassword: passwordSchema,
+	newPassword: passwordSchema
+});
+
+export {
+	registerSchema,
+	loginSchema,
+	verifyPasswordResetToken,
+	addressSchema,
+	updatePasswordSchema
+};
