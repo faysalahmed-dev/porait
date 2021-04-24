@@ -4,18 +4,21 @@ import path from 'path';
 import pug from 'pug';
 import crypto from 'crypto';
 
-interface EmailInfo {
+interface EmailInfo<T> {
 	from: string;
 	to: string;
 	subject: string;
 	template: {
 		name: string;
-		data?: any;
+		data: T;
 	};
 }
 
-export const genEmailToken = (size = 90) => {
-	return crypto.createHash('sha512').update(crypto.randomBytes(32).toString('hex')).digest('hex');
+export const genEmailToken = (): string => {
+	return crypto
+		.createHash('sha512')
+		.update(crypto.randomBytes(32).toString('hex'))
+		.digest('hex');
 };
 
 class Email {
@@ -25,16 +28,17 @@ class Email {
 	}
 	private init() {
 		return nodemailer.createTransport({
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			host: process.env.MAIL_HOST,
 			port: process.env.MAIL_PORT,
 			auth: {
-				user: process.env.MAIL_USER!,
-				pass: process.env.MAIL_PASS!
+				user: process.env.MAIL_USER,
+				pass: process.env.MAIL_PASS
 			}
 		});
 	}
-	sendMail({ from, to, subject, template }: EmailInfo) {
+	sendMail({ from, to, subject, template }: EmailInfo<{ resetUrl: string }>) {
 		return this.transporter.sendMail({
 			from,
 			to,

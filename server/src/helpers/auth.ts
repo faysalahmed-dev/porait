@@ -3,48 +3,50 @@ import jwt from 'jsonwebtoken';
 import moment from 'moment';
 import bycript from 'bcryptjs';
 import { promisify } from 'util';
-import _ from 'lodash';
+import { IUserTokenDecode, IUserDataFull } from '../@types/user';
 
-export const getTime = () => Date.now() + moment.duration(90, 'days').asMilliseconds();
+export const getTime = (): number =>
+	Date.now() + moment.duration(90, 'days').asMilliseconds();
 
-export const getToken = (userId: string) => {
-	return promisify<object, jwt.Secret, jwt.SignOptions, string>(jwt.sign)(
+export const getToken = (userId: string): Promise<string> => {
+	return promisify<{ id: string }, jwt.Secret, jwt.SignOptions, string>(jwt.sign)(
 		{ id: userId },
-		process.env.JWT!,
+		process.env.JWT,
 		{
 			expiresIn: getTime()
 		}
 	);
 };
-export const verifyToken = (token: string) => {
+export const verifyToken = (token: string): Promise<IUserTokenDecode> => {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
-	return promisify<string, jwt.Secret, jwt.VerifyOptions, { id: string }>(jwt.verify)(
+	return promisify<string, jwt.Secret, jwt.VerifyOptions, IUserTokenDecode>(jwt.verify)(
 		token,
-		process.env.JWT!
+		process.env.JWT
 	);
 };
 
-export const hashPassword = async (password: string) => {
+export const hashPassword = async (password: string): Promise<string> => {
 	const salt = await promisify<number, string>(bycript.genSalt)(10);
 	const hash = await promisify<string, string, string>(bycript.hash)(password, salt);
 	return hash;
 };
 
-export const comparePassword = (password: string, hashPassword: string) => {
+export const comparePassword = (
+	password: string,
+	hashPassword: string
+): Promise<boolean> => {
 	return bycript.compare(password, hashPassword);
 };
 
-export async function verifyAuthToken(context: Context) {
+export async function verifyAuthToken(context: Context): Promise<IUserDataFull> {
 	// context is for socket or real time data
 	// headers is defalut headers
 	const authHeader = context.connection
 		? context.connection.context.authorization
 		: context.request.headers.authorization;
 
-	//  check token
-	// console.log(authHeader);
-	const conditions = authHeader && authHeader.startsWith('Bearer ');
-	if (conditions) {
+	if (!!authHeader && !!authHeader.startsWith('Bearer ')) {
 		const token = authHeader.replace('Bearer ', '');
 		const decoded = await verifyToken(token);
 		if (decoded.id) {

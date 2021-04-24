@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { GraphQLRequestContext, GraphQLRequest } from 'apollo-server-types';
 const prisma = new PrismaClient({
 	errorFormat: 'pretty',
 	log: ['error', 'info', 'warn']
@@ -9,15 +10,27 @@ prisma
 	.then(() => console.log('database connected'))
 	.catch(err => console.log(err));
 
-export interface Context {
+export interface IRequest extends GraphQLRequest {
+	protocol: string;
+	get(key: string): string;
+	headers: {
+		'user-agent': string;
+		authorization: string;
+	};
+}
+export interface Context extends GraphQLRequestContext {
 	prisma: PrismaClient;
-	request: any;
-	connection?: any;
+	connection?: {
+		context: {
+			authorization?: string;
+		};
+	};
+	request: IRequest;
 }
 
-export function createContext(req: any) {
+export function createContext(context: Omit<Context, 'prisma'>): Context {
 	return {
-		...req,
+		...context,
 		prisma
 	};
 }

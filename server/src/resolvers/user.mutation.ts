@@ -15,14 +15,13 @@ import { getHostUrl, getUserAgent } from '../helpers/utils';
 import { ResizeOptions } from 'sharp';
 import { IUserTokenDecode, IUserUpdate, IUserUpdatePassword } from '../@types/user';
 import { registerSchema, updatePasswordSchema } from '../utils/validatorSchema';
-import { decode, DecodeOptions } from 'jsonwebtoken';
-// @ts-ignore
+import { decode } from 'jsonwebtoken';
 import { getClientIp } from 'request-ip';
 
 const userResolvers: IResolvers = {
-	async uploadImage(_, args, cxt: Context, info) {
+	async uploadImage(_, args, ctx: Context) {
 		try {
-			const user = await verifyAuthToken(cxt);
+			const user = await verifyAuthToken(ctx);
 
 			const file: FileUpload = await args.file;
 			const filename = `${Date.now()}-${uuid()}.png`;
@@ -33,14 +32,14 @@ const userResolvers: IResolvers = {
 				stream.on('data', chank => fileChank.push(chank as Buffer));
 				stream.on('error', reject);
 				stream.on('end', async () => {
-					const fileUrl = `${getHostUrl(cxt.request)}/upload/${filename}`;
+					const fileUrl = `${getHostUrl(ctx.request)}/upload/${filename}`;
 					try {
 						const opt = {} as ResizeOptions;
 						if (args.type === 'avater') {
 							opt.width = 400;
 						}
 						await resizeImage(fileChank, uploadFolder, opt);
-						await cxt.prisma.user.update({
+						await ctx.prisma.user.update({
 							where: { id: user.id },
 							data: {
 								images: {
@@ -64,10 +63,10 @@ const userResolvers: IResolvers = {
 			throw err;
 		}
 	},
-	async updateUser(_, args: { data: IUserUpdate }, cxt: Context, info) {
+	async updateUser(_, args: { data: IUserUpdate }, ctx: Context) {
 		try {
 			// check user is auth
-			const user = await verifyAuthToken(cxt);
+			const user = await verifyAuthToken(ctx);
 			// user updateable data key
 			const defaultKey = [
 				'first_name',
@@ -79,7 +78,7 @@ const userResolvers: IResolvers = {
 
 			const argsKey: string[] = Object.keys(args.data);
 			// check user input is empty or not in the default key
-			if (!!!argsKey.length) {
+			if (!argsKey.length) {
 				throw new Error('input must not be empty');
 			}
 
@@ -94,9 +93,8 @@ const userResolvers: IResolvers = {
 			const updateUserSchema = registerSchema.pick(schemaKey);
 			await updateUserSchema.validate(args.data);
 
-			const updatedUser = await cxt.prisma.user.update({
+			const updatedUser = await ctx.prisma.user.update({
 				where: { id: user.id },
-				// @ts-ignore
 				data: args.data
 			});
 			return updatedUser;
@@ -105,10 +103,10 @@ const userResolvers: IResolvers = {
 			throw err;
 		}
 	},
-	async updatePassword(_, args: { data: IUserUpdatePassword }, cxt: Context, info) {
+	async updatePassword(_, args: { data: IUserUpdatePassword }, ctx: Context) {
 		try {
 			// check user is auth
-			const user = await verifyAuthToken(cxt);
+			const user = await verifyAuthToken(ctx);
 			// validate user input
 			await updatePasswordSchema.validate(args.data);
 
@@ -119,7 +117,7 @@ const userResolvers: IResolvers = {
 			);
 			if (passwordMatch) {
 				const hashedPassword = await hashPassword(args.data.newPassword);
-				const ip_address = getClientIp(cxt.request);
+				const ip_address = getClientIp(ctx.request);
 				let details = {};
 				if (ip_address) {
 					details = geoIp.lookup(ip_address) || {};
@@ -127,7 +125,7 @@ const userResolvers: IResolvers = {
 				const token = await getToken(user.id);
 				const expires_at = decode(token) as IUserTokenDecode;
 
-				await cxt.prisma.user.update({
+				await ctx.prisma.user.update({
 					where: { id: user.id },
 					data: {
 						password: hashedPassword,
@@ -138,7 +136,7 @@ const userResolvers: IResolvers = {
 							},
 							create: {
 								token,
-								agent: getUserAgent(cxt.request.headers['user-agent']),
+								agent: getUserAgent(ctx.request.headers['user-agent']),
 								expires_at: new Date(expires_at.exp).toISOString(),
 								ip_address,
 								details: JSON.stringify(details)

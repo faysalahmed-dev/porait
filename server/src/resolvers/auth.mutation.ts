@@ -6,7 +6,6 @@ import {
 	comparePassword,
 	verifyAuthToken
 } from '../helpers/auth';
-// @ts-ignore
 import { getClientIp } from 'request-ip';
 import geoIp from 'geoip-lite';
 import moment from 'moment';
@@ -20,7 +19,7 @@ import {
 	verifyPasswordResetToken
 } from '../utils/validatorSchema';
 
-import { IUserData, IUserTokenDecode } from '../@types/user';
+import { IUser, IUserTokenDecode } from '../@types/user';
 
 type MyEnum = 'email' | 'username';
 
@@ -49,7 +48,7 @@ interface PasswordResetObj {
 }
 
 export const authResolvers: IResolvers = {
-	async register(parent, args: { data: IUserData }, context: Context) {
+	async register(parent, args: { data: IUser }, context: Context) {
 		try {
 			await registerSchema.validate(args.data);
 			const {
@@ -90,7 +89,6 @@ export const authResolvers: IResolvers = {
 					username,
 					first_name,
 					last_name,
-					// @ts-ignore
 					gender,
 					email_verify_token: emailVerifyToken,
 					images: {
@@ -162,7 +160,7 @@ export const authResolvers: IResolvers = {
 				where: {
 					[queryFor]: dataObj[queryFor]
 				},
-				include: {images: true}
+				include: { images: true }
 			});
 			if (!user) {
 				throw new Error('user not found');
@@ -209,7 +207,11 @@ export const authResolvers: IResolvers = {
 			throw err;
 		}
 	},
-	async forgetPassword(parent, args: { data: { email: string } }, context: Context) {
+	async forgetPassword(
+		parent,
+		args: { data: { email: string } },
+		context: Context
+	): Promise<string> {
 		try {
 			await loginSchema.pick(['email']).validate(args.data);
 			const hasUser = await context.prisma.user.findUnique({
@@ -231,15 +233,17 @@ export const authResolvers: IResolvers = {
 						})
 					}
 				});
-				await eamilSender.sendMail({
-					from: 'support@porait.com',
-					to: args.data.email,
-					subject: 'Reset Password',
-					template: {
-						name: 'password-reset.pug',
-						data: { resetUrl }
-					}
-				});
+				if (process.env.NODE_ENV === 'production') {
+					await eamilSender.sendMail({
+						from: 'support@porait.com',
+						to: args.data.email,
+						subject: 'Reset Password',
+						template: {
+							name: 'password-reset.pug',
+							data: { resetUrl }
+						}
+					});
+				}
 				return 'password reset link send to your email address. please check your inbox or spam folder';
 			} else {
 				throw new Error('user not found');
@@ -253,7 +257,8 @@ export const authResolvers: IResolvers = {
 		pr,
 		args: { data: PasswordResetVerifyInput },
 		{ prisma }: Context
-	) {
+	): Promise<string> {
+		// eslint-disable-next-line no-useless-catch
 		try {
 			await verifyPasswordResetToken.validate(args.data);
 			const user = await prisma.user.findFirst({
@@ -301,7 +306,11 @@ export const authResolvers: IResolvers = {
 			// throw new Error('some thing went wrong');
 		}
 	},
-	async verifyEmail(parent, args: { data: EmailVerify }, { prisma }: Context) {
+	async verifyEmail(
+		parent,
+		args: { data: EmailVerify },
+		{ prisma }: Context
+	): Promise<string> {
 		try {
 			await verifyPasswordResetToken.omit(['password']).validate(args.data);
 			const user = await prisma.user.findFirst({
@@ -335,7 +344,7 @@ export const authResolvers: IResolvers = {
 			throw err;
 		}
 	},
-	async resendVerifyEmailToken(parent, args, context: Context) {
+	async resendVerifyEmailToken(parent, args, context: Context): Promise<string> {
 		try {
 			const user = await verifyAuthToken(context);
 
@@ -345,29 +354,31 @@ export const authResolvers: IResolvers = {
 
 			const hostUrl = getHostUrl(context.request);
 			const resetUrl = `${hostUrl}/verify-email?email_token=${user.email_verify_token}&user_id=${user.id}`;
-
-			await eamilSender.sendMail({
-				from: 'support@porait.com',
-				to: user.email,
-				subject: 'Confirm Email Address',
-				template: {
-					name: 'confirm-email.pug',
-					data: { resetUrl }
-				}
-			});
+			if (process.env.NODE_ENV === 'production') {
+				await eamilSender.sendMail({
+					from: 'support@porait.com',
+					to: user.email,
+					subject: 'Confirm Email Address',
+					template: {
+						name: 'confirm-email.pug',
+						data: { resetUrl }
+					}
+				});
+			}
+			return 'successfuly send email';
 		} catch (err) {
 			console.log(err);
 			throw err;
 		}
 	},
-	async logoutUser(parent, args, context: Context) {
+	async logoutUser(parent, args, context: Context): Promise<string> {
 		try {
 			const user = await verifyAuthToken(context);
 
 			const authHeader = context.connection
 				? context.connection.context.authorization
 				: context.request.headers.authorization;
-			const token = authHeader.replace('Bearer ', '');
+			const token = authHeader?.replace('Bearer ', '');
 			await context.prisma.user.update({
 				where: { id: user.id },
 				data: {
@@ -387,13 +398,13 @@ export const authResolvers: IResolvers = {
 			throw err;
 		}
 	},
-	async logoutAllUser(parent, args, context: Context) {
+	async logoutAllUser(parent, args, context: Context): Promise<string> {
 		try {
 			const user = await verifyAuthToken(context);
 			const authHeader = context.connection
 				? context.connection.context.authorization
 				: context.request.headers.authorization;
-			const token = authHeader.replace('Bearer ', '');
+			const token = authHeader?.replace('Bearer ', '');
 			await context.prisma.user.update({
 				where: { id: user.id },
 				data: {
