@@ -2,3 +2,6 @@ node_modules
 prisma
 tsconfig.json
 client/
+postbuild.js
+dist
+jest.config.ts
