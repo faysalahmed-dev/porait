@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Context } from '../../prisma';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
@@ -11,7 +12,7 @@ export const getTime = (): number =>
 export const getToken = (userId: string): Promise<string> => {
 	return promisify<{ id: string }, jwt.Secret, jwt.SignOptions, string>(jwt.sign)(
 		{ id: userId },
-		process.env.JWT,
+		process.env.JWT!,
 		{
 			expiresIn: getTime()
 		}
@@ -22,7 +23,7 @@ export const verifyToken = (token: string): Promise<IUserTokenDecode> => {
 	// @ts-ignore
 	return promisify<string, jwt.Secret, jwt.VerifyOptions, IUserTokenDecode>(jwt.verify)(
 		token,
-		process.env.JWT
+		process.env.JWT!
 	);
 };
 

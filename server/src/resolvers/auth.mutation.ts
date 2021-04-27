@@ -6,6 +6,8 @@ import {
 	comparePassword,
 	verifyAuthToken
 } from '../helpers/auth';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { getClientIp } from 'request-ip';
 import geoIp from 'geoip-lite';
 import moment from 'moment';

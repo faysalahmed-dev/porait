@@ -1,5 +1,6 @@
 declare module 'request-ip' {
-	let getClientIp: (req: any) => string;
+	import { IRequest } from 'server/prisma';
+	let getClientIp: (req: IRequest) => string;
 
 	export { getClientIp };
 }
