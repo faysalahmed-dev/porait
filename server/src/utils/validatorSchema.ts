@@ -25,10 +25,7 @@ const genderSchema = yup
 	.required()
 	.matches(/(male|female|other)/, 'invalid gender type provided');
 
-const addressSchema = yup
-	.string()
-	.required('address requied')
-	.length(5, 'invalid address');
+const addressSchema = yup.string().notRequired();
 
 const registerSchema = yup.object().shape({
 	first_name: firstNameSchema,
