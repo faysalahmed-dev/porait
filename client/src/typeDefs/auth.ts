@@ -16,6 +16,7 @@ const fragments = {
 			}
 			token
 			gender
+			address
 		}
 	`
 };
@@ -77,5 +78,18 @@ export const VERIFY_EMAIL = gql`
 export const UPLOAD_IMAGE = gql`
 	mutation UploadAvater($type: FileType!, $file: Upload!) {
 		uploadImage(type: $type, file: $file)
+	}
+`;
+
+export const UPDATE_USER_DATA = gql`
+	mutation updateUserData($data: UserUpdate!) {
+		updateUser(data: $data) {
+			first_name
+			last_name
+			username
+			email
+			gender
+			address
+		}
 	}
 `;

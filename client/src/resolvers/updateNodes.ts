@@ -26,6 +26,16 @@ const updateNode: UpdatesConfig = {
 					}
 				};
 			});
+		},
+		updateUser(result, args, cache) {
+			// @ts-ignore
+			cache.updateQuery({ query: AUTH_USER }, data => ({
+				authUser: {
+					// @ts-ignore
+					...data.authUser,
+					...result.updateUser
+				}
+			}));
 		}
 	},
 	Subscription: {}

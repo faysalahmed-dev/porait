@@ -24,11 +24,11 @@ body {
 }
 
 .btn-green {
-	@apply inline-flex items-center bg-green-300 border-0 py-2 px-3 focus:outline-none hover:bg-green-400 rounded text-gray-700;
+	@apply inline-flex items-center justify-center bg-green-300 border-0 py-2 px-3 focus:outline-none hover:bg-green-400 rounded text-gray-700;
 }
 
-.btn-gray {
-	@apply inline-flex items-center bg-gray-800 border-0 py-2 px-3 focus:outline-none hover:bg-gray-700 rounded text-white;
+.btn-gray-light {
+	@apply inline-flex items-center justify-center bg-dark-input border-0 py-2 px-3 focus:outline-none rounded;
 }
 
 .btn-green-lg {
