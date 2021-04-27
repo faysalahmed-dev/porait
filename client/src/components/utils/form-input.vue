@@ -21,12 +21,25 @@
 				:placeholder="placeholder"
 				class="auth-input input"
 				:value="value"
+				:type="inputType"
 				@input="
 					$emit('on-input-change', { name: name, value: $event.target.value })
 				"
 			/>
 			<div class="auth-input-icon">
 				<i :class="['eva', `eva-${iconName}`]"></i>
+			</div>
+			<div
+				v-if="passwordEye"
+				class="absolute right-0 px-3 rounded-lg flex items-center text-2xl leading-5 text-gray-800 bg-white"
+				@click="showPassword = !showPassword"
+				style="top: 2px; bottom: 2px; right: 2px"
+			>
+				<i
+					:class="`eva ${
+						showPassword ? 'eva-eye-off-outline' : 'eva-eye-outline'
+					}`"
+				></i>
 			</div>
 		</div>
 		<span v-if="error" class="auth-input-error mt-3">
@@ -36,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 
 export default defineComponent({
 	name: 'form-input',
@@ -64,10 +77,31 @@ export default defineComponent({
 		formType: {
 			type: String,
 			default: 'input'
+		},
+		type: {
+			type: String,
+			default: 'text'
+		},
+		passwordEye: {
+			type: Boolean,
+			default: false
 		}
 	},
-	setup() {
-		return {};
+	setup({ passwordEye, type }) {
+		const showPassword = ref(false);
+		const inputType = computed(() => {
+			if (passwordEye) {
+				return showPassword.value ? 'text' : 'password';
+			}
+			return type;
+		});
+		return { showPassword, inputType };
 	}
 });
 </script>
+
+<style scoped>
+input[type='password']::placeholder {
+	font-size: 30px;
+}
+</style>
