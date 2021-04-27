@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+
 const fragments = {
 	userFragment: gql`
 		fragment userFragment on User {
@@ -70,5 +71,10 @@ export const RESEND_EMAIL_VERIFY_LINK = gql`
 export const VERIFY_EMAIL = gql`
 	mutation VerifyEmail($input: EmailVerifyInput!) {
 		verifyEmail(data: $input)
+	}
+`;
+export const UPLOAD_IMAGE = gql`
+	mutation UploadAvater($type: FileType!, $file: Upload!) {
+		uploadImage(type: $type, file: $file)
 	}
 `;
