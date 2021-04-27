@@ -1,10 +1,13 @@
 import { createApp, h } from 'vue';
 import { provideClient } from '@urql/vue';
+import Toast from 'vue-toastification';
+// @ts-ignore
+import VueProgressBar from '@aacassandra/vue3-progressbar';
 import App from './App.vue';
-import Router from './router/index';
+import Router from './router';
 import Layout from './components/layout.vue';
 import { client } from './client';
-import Toast, { PluginOptions, POSITION } from 'vue-toastification';
+import { progressBarOpt, toastOpt } from './utils/appOptions';
 
 import 'vue-toastification/dist/index.css';
 import 'eva-icons/style/eva-icons.css';
@@ -18,12 +21,8 @@ const app = createApp({
 	render: () => h(App)
 });
 app.component('default-layout', Layout);
-const options: PluginOptions = {
-	position: POSITION.TOP_RIGHT,
-	timeout: 3000,
-	bodyClassName: ['font-body', 'capitalize', 'font-bold'],
-	closeButtonClassName: ['opacity-100', 'text-white']
-};
-app.use(Toast, options);
+app.use(Toast, toastOpt);
+app.use(VueProgressBar, progressBarOpt);
 app.use(Router);
+
 app.mount('#app');
