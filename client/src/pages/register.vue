@@ -222,15 +222,16 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable camelcase */
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
-import UserIcon from '../components/utils/user-icon.vue';
-import { registerSchema } from '../utils/schema';
 import { useMutation } from '@urql/vue';
-import DropDown from '../components/utils/drop-down.vue';
 import omit from 'lodash/omit';
 import { useToast } from 'vue-toastification';
+import UserIcon from '../components/utils/user-icon.vue';
+import { registerSchema } from '../utils/schema';
+import DropDown from '../components/utils/drop-down.vue';
 import { REGISTER_USER } from '../typeDefs';
 
 export default defineComponent({
@@ -253,14 +254,14 @@ export default defineComponent({
 			initialValues: formValues,
 			validationSchema: registerSchema
 		});
-		const { value: email } = useField('email');
-		const { value: first_name } = useField('first_name');
-		const { value: last_name } = useField('last_name');
-		const { value: username } = useField('username');
-		const { value: password } = useField('password');
-		const { value: confirmPassword } = useField('confirmPassword');
-		const { value: gender } = useField('gender');
-		const { value: inputChecked } = useField('inputChecked');
+		const { value: email } = useField<string>('email');
+		const { value: first_name } = useField<string>('first_name');
+		const { value: last_name } = useField<string>('last_name');
+		const { value: username } = useField<string>('username');
+		const { value: password } = useField<string>('password');
+		const { value: confirmPassword } = useField<string>('confirmPassword');
+		const { value: gender } = useField<string>('gender');
+		const { value: inputChecked } = useField<string>('inputChecked');
 
 		const { executeMutation, fetching: isSubmitting } = useMutation(REGISTER_USER);
 		const onHandleSubmit = handleSubmit(val => {

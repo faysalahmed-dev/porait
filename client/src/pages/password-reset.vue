@@ -96,15 +96,15 @@
 </template>
 
 <script lang="ts">
-import UserIcon from '../components/utils/user-icon.vue';
 import { defineComponent, ref } from 'vue';
 import { useMutation } from '@urql/vue';
-import { VERIFY_RESET_PASSWORD } from '../typeDefs';
-import { resetPasswordSchema } from '../utils/schema';
 import { useForm, useField } from 'vee-validate';
 import { useToast } from 'vue-toastification';
 import { useRouter, useRoute } from 'vue-router';
 import pick from 'lodash/pick';
+import { resetPasswordSchema } from '../utils/schema';
+import { VERIFY_RESET_PASSWORD } from '../typeDefs';
+import UserIcon from '../components/utils/user-icon.vue';
 
 export default defineComponent({
 	setup() {

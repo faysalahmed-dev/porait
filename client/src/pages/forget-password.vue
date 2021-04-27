@@ -69,10 +69,10 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useMutation } from '@urql/vue';
-import { FORGET_PASSWORD } from '../typeDefs/index';
-import { forgetPasswordSchema } from '../utils/schema';
 import { useForm, useField } from 'vee-validate';
 import { useToast } from 'vue-toastification';
+import { FORGET_PASSWORD } from '../typeDefs/index';
+import { forgetPasswordSchema } from '../utils/schema';
 
 export default defineComponent({
 	setup() {
@@ -82,7 +82,7 @@ export default defineComponent({
 			initialValues: { email: '' },
 			validationSchema: forgetPasswordSchema
 		});
-		const { value: email } = useField('email');
+		const { value: email } = useField<string>('email');
 		const { executeMutation, fetching: isSubmitting } = useMutation(FORGET_PASSWORD);
 		const onHandleSubmit = handleSubmit(async value => {
 			showMessage.value = false;

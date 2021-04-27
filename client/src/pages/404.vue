@@ -16,10 +16,13 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useRouter } from 'vue-router';
+
 export default defineComponent({
 	setup() {
 		const router = useRouter();
-		const navigate = computed(() => router.options.history.state.back || '/');
+		const navigate = computed(
+			() => (router.options.history.state.back as string) || '/'
+		);
 		return { navigate };
 	}
 });

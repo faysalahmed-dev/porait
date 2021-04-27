@@ -96,50 +96,46 @@ import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 
 export default {
 	props: ['user', 'loading'],
-	setup({ user, loading }) {
+	setup() {
 		return {
-			user,
 			items: [
 				{
 					name: 'Post',
 					href: '/posts',
 					icon: `
-            <i
-                class="eva inline-block eva-lg -mt-1 eva-layout-outline translate-y-0.5 transform"
-                style="transform: translateY(3px)"
-			      ></i>
-          `
+						<i class="eva inline-block eva-lg -mt-1 eva-layout-outline translate-y-0.5 transform" style="transform: translateY(3px)"></i>
+          			`
 				},
 				{
 					name: 'Comments',
 					description: 'Create your own targeted content',
 					href: '/comments',
 					icon: `
-            <i
+            			<i
 							class="eva inline-block eva-lg -mt-1 eva-message-circle-outline translate-y-0.5 transform"
 							style="transform: translateY(3px)"
 						></i>
-          `
+         			 `
 				},
 				{
 					name: 'Profile',
 					href: '/profile',
 					icon: `
-            <i
+           				<i
 							class="eva inline-block eva-lg -mt-1 eva-person-outline translate-y-0.5 transform"
 							style="transform: translateY(3px)"
 						></i>
-          `
+          			`
 				},
 				{
 					name: 'Setting',
 					href: '/setting',
 					icon: `
-            <i
+            			<i
 							class="eva inline-block eva-lg -mt-1 eva-settings-2-outline"
 							style="transform: translateY(3px)"
 						></i>
-          `
+          			`
 				}
 			]
 		};

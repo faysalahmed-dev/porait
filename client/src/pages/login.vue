@@ -116,11 +116,11 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useForm, useField } from 'vee-validate';
-import UserIcon from '../components/utils/user-icon.vue';
-import { loginSchema } from '../utils/schema';
 import { useMutation } from '@urql/vue';
 import { useToast } from 'vue-toastification';
 import { useRoute, useRouter } from 'vue-router';
+import { loginSchema } from '../utils/schema';
+import UserIcon from '../components/utils/user-icon.vue';
 import { LOGIN_USER } from '../typeDefs/index';
 
 export default defineComponent({
@@ -159,7 +159,7 @@ export default defineComponent({
 							}
 						});
 					} else {
-						const callback = route.query.callback;
+						const {callback} = route.query;
 						const redir = typeof callback === 'string' ? callback : '/';
 						router.push(redir);
 					}

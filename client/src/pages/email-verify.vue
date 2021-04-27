@@ -79,9 +79,9 @@
 import { defineComponent, ref, inject, watchEffect, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useMutation } from '@urql/vue';
+import { useToast } from 'vue-toastification';
 import { RESEND_EMAIL_VERIFY_LINK, VERIFY_EMAIL } from '../typeDefs';
 import { IUser } from '../utils/interface';
-import { useToast } from 'vue-toastification';
 
 export default defineComponent({
 	setup() {
@@ -102,7 +102,7 @@ export default defineComponent({
 					count.value = 60;
 					clearInterval(interval);
 				} else {
-					count.value--;
+					count.value -= 1;
 				}
 			}, 1000);
 		}
@@ -132,7 +132,7 @@ export default defineComponent({
 
 		onMounted(() => {
 			if (!authUser?.value) return;
-			else if (authUser.value.authUser.email_verified) return;
+			if (authUser.value.authUser.email_verified) return;
 			if (isVerifyMode.value) {
 				const input = {
 					token: route.query.email_token,
