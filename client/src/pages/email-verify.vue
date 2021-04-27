@@ -90,7 +90,7 @@ export default defineComponent({
 		const count = ref(60);
 		const toast = useToast();
 		const isVerifyMode = ref(!!route.query.email_token && !!route.query.user_id);
-		const authUser = inject<{ value: { authUser: IUser } }>('authUser');
+		const authUser = inject<{ value: IUser }>('authUser');
 		const { executeMutation: sendVerifyEmail, fetching: loading } = useMutation(
 			RESEND_EMAIL_VERIFY_LINK
 		);
@@ -107,8 +107,8 @@ export default defineComponent({
 			}, 1000);
 		}
 		function startCountDown() {
-			if (count.value === 60 && authUser && authUser.value.authUser) {
-				sendVerifyEmail({ userId: authUser.value.authUser.id }).then(result => {
+			if (count.value === 60 && authUser?.value) {
+				sendVerifyEmail({ userId: authUser.value.id }).then(result => {
 					if (result.error) {
 						toast.error(result.error.message);
 					} else {
@@ -125,14 +125,14 @@ export default defineComponent({
 				'We Just send confirmation email. please check you inbox or spam folder'
 		});
 		watchEffect(() => {
-			if (authUser && authUser.value.authUser.email_verified) {
+			if (authUser?.value && authUser.value.email_verified) {
 				router.push({ name: 'home-page' });
 			}
 		});
 
 		onMounted(() => {
 			if (!authUser?.value) return;
-			if (authUser.value.authUser.email_verified) return;
+			if (authUser.value.email_verified) return;
 			if (isVerifyMode.value) {
 				const input = {
 					token: route.query.email_token,
