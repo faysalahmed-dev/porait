@@ -25,8 +25,9 @@
 import { defineComponent, inject } from 'vue';
 import Header from './header.vue';
 import Footer from './footer.vue';
+
 export default defineComponent({
-	name: 'app-layout',
+	name: 'default-layout',
 	components: {
 		Header,
 		Footer

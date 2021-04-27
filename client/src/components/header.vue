@@ -47,31 +47,26 @@
 
 <script lang="ts">
 import { defineComponent, ref, inject, computed } from 'vue';
-import _ from 'lodash';
-import { IUser } from '../utils/interface';
 import { useMutation } from '@urql/vue';
-import { LOGOUT_USER } from '../typeDefs/auth';
 import { useToast } from 'vue-toastification';
+import { IUser } from '../utils/interface';
+import { LOGOUT_USER } from '../typeDefs/auth';
 import PopOver from './utils/pop-over.vue';
 
 export default defineComponent({
 	setup() {
 		const showModel = ref(false);
 		const toast = useToast();
-		const authUser = inject<{ value: { authUser: IUser } }>('authUser');
+		const authUser = inject<{ value: IUser }>('authUser');
 		const { executeMutation, fetching: logouting } = useMutation(LOGOUT_USER);
 		const user = computed(() => {
 			if (authUser!.value) {
 				return {
-					name:
-						authUser!.value.authUser.first_name.trim() +
-						' ' +
-						authUser!.value.authUser.last_name.trim(),
-					image: authUser!.value.authUser.images.avater
+					name: `${authUser!.value.first_name.trim()} ${authUser!.value.last_name.trim()}`,
+					image: authUser!.value.images.avater
 				};
-			} else {
-				return null;
 			}
+			return null;
 		});
 		async function logoutUser() {
 			try {
