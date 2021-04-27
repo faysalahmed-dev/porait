@@ -13,12 +13,13 @@ const passwordSchema = yup
 	.min(6, 'password is too short minmun 6 characters long')
 	.max(29, 'password is too long maximun 29 characters long');
 
-const confirmPasswordSchema = yup
-	.string()
-	.oneOf([yup.ref('password'), null], 'Passwords must match')
-	.required('confirm password required')
-	.min(6, 'confirm password is too short minmun 6 characters long')
-	.max(29, 'confirm password is too long maximun 29 characters long');
+const confirmPasswordSchema = (ref: string = 'password') =>
+	yup
+		.string()
+		.oneOf([yup.ref(ref), null], 'Passwords must match')
+		.required('confirm password required')
+		.min(6, 'confirm password is too short minmun 6 characters long')
+		.max(29, 'confirm password is too long maximun 29 characters long');
 
 const usernameSchema = yup
 	.string()
@@ -47,14 +48,14 @@ const registerSchema = yup.object({
 	username: usernameSchema,
 	email: emailSchema,
 	password: passwordSchema,
-	confirmPassword: confirmPasswordSchema,
+	confirmPassword: confirmPasswordSchema(),
 	inputChecked: inputCheckedSchema,
 	gender: genderSchema
 });
 const forgetPasswordSchema = yup.object({ email: emailSchema });
 const resetPasswordSchema = yup.object({
 	password: passwordSchema,
-	confirmPassword: confirmPasswordSchema
+	confirmPassword: confirmPasswordSchema()
 });
 export const updateUserSchema = yup.object({
 	first_name: firstNameSchema,
@@ -63,6 +64,12 @@ export const updateUserSchema = yup.object({
 	email: emailSchema,
 	gender: genderSchema,
 	address: addressSchema
+});
+
+export const updateUserPasswordSchema = yup.object({
+	oldPassword: passwordSchema,
+	newPassword: passwordSchema,
+	confirmPassword: confirmPasswordSchema('newPassword')
 });
 
 export { loginSchema, registerSchema, forgetPasswordSchema, resetPasswordSchema };

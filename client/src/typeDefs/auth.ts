@@ -93,3 +93,11 @@ export const UPDATE_USER_DATA = gql`
 		}
 	}
 `;
+
+export const UPDATE_PASSWORD = gql`
+	mutation updateUserPassword($data: UpdatePassword!) {
+		updatePassword(data: $data) {
+			token
+		}
+	}
+`;
