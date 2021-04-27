@@ -1,0 +1,24 @@
+{
+	"env": {
+		"browser": true,
+		"es2021": true
+	},
+	"extends": ["plugin:vue/essential", "airbnb-base", "prettier"],
+	"parserOptions": {
+		"ecmaVersion": 12,
+		"parser": "@typescript-eslint/parser",
+		"sourceType": "module"
+	},
+	"settings": {
+		"import/resolver": {
+			"typescript": {}
+		}
+	},
+	"plugins": ["vue", "@typescript-eslint"],
+	"root": true,
+	"rules": {
+		"vue/no-multiple-template-root": "off",
+		"import/extensions": "off",
+		"import/prefer-default-export": "off"
+	}
+}

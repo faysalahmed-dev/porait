@@ -1,0 +1,4 @@
+{
+	"eslint.workingDirectories": ["./client", "./server"],
+	"vetur.validation.template": false
+}
