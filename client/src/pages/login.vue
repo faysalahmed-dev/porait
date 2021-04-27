@@ -63,11 +63,7 @@
 						<div class="form-control">
 							<label class="cursor-pointer label">
 								<div>
-									<input
-										type="checkbox"
-										checked="checked"
-										class="checkbox"
-									/>
+									<input type="checkbox" checked class="checkbox" />
 									<span
 										style="transform: scaleX(-1)"
 										class="checkbox-mark"
@@ -114,7 +110,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, inject } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import { useMutation } from '@urql/vue';
 import { useToast } from 'vue-toastification';
@@ -137,15 +133,16 @@ export default defineComponent({
 			initialValues: formValues,
 			validationSchema: loginSchema
 		});
-		const { value: email } = useField('email');
-		const { value: password } = useField('password');
+		const { value: email } = useField<string>('email');
+		const { value: password } = useField<string>('password');
+
+		const executeAuthQuery = inject<Function>('executeAuthQuery');
 
 		const { executeMutation, fetching: isSubmitting } = useMutation(LOGIN_USER);
 
 		const onHandleSubmit = handleSubmit(value => {
 			executeMutation({ input: value }).then(result => {
 				if (result.error) {
-					console.error(result.error);
 					toast.error(result.error.message);
 				} else {
 					toast.success('successfuly Login');
@@ -159,11 +156,13 @@ export default defineComponent({
 							}
 						});
 					} else {
-						const {callback} = route.query;
+						const { callback } = route.query;
 						const redir = typeof callback === 'string' ? callback : '/';
 						router.push(redir);
 					}
 					window.localStorage.setItem('token', result.data.login.token);
+					// @ts-ignore
+					executeAuthQuery();
 				}
 			});
 		});

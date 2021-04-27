@@ -223,7 +223,7 @@
 
 <script lang="ts">
 /* eslint-disable camelcase */
-import { defineComponent, ref } from 'vue';
+import { defineComponent, inject, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import { useMutation } from '@urql/vue';
@@ -263,6 +263,8 @@ export default defineComponent({
 		const { value: gender } = useField<string>('gender');
 		const { value: inputChecked } = useField<string>('inputChecked');
 
+		const executeAuthQuery = inject<Function>('executeAuthQuery');
+
 		const { executeMutation, fetching: isSubmitting } = useMutation(REGISTER_USER);
 		const onHandleSubmit = handleSubmit(val => {
 			executeMutation({
@@ -275,6 +277,8 @@ export default defineComponent({
 					resetForm();
 					router.push({ name: 'verify-email-page' });
 					window.localStorage.setItem('token', result.data.register.token);
+					// @ts-ignore
+					executeAuthQuery();
 				}
 			});
 		});

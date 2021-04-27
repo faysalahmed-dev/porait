@@ -15,14 +15,15 @@ export default defineComponent({
 	setup() {
 		const router = useRouter();
 		const progress = useProgress();
-		// const token = window.localStorage.getItem('token');
-		const { fetching, data } = useQuery({
-			query: AUTH_USER
-			// pause: !!!token // turn into boolen
+		const token = window.localStorage.getItem('token');
+		const { fetching, data, executeQuery } = useQuery({
+			query: AUTH_USER,
+			pause: !token // turn into boolen
 		});
 		const authUser = computed(() => (data.value ? data.value.authUser : null));
 		provide('authUser', authUser);
 		provide('appLoading', readonly(fetching));
+		provide('executeAuthQuery', executeQuery);
 
 		router.beforeEach((to, from, next) => {
 			progress.start();
