@@ -6,6 +6,10 @@ import ForgetPassword from '@/pages/forget-password.vue';
 import PasswordReset from '@/pages/password-reset.vue';
 import PageNotFound from '@/pages/404.vue';
 import EmailVerify from '@/pages/email-verify.vue';
+import UserSetting from '@/pages/account-setting.vue';
+
+import UpdateUser from '@/components/user/update-user.vue';
+import ChangePassword from '@/components/user/change-password.vue';
 
 import { client } from '../client';
 import { AUTH_USER } from '../typeDefs';
@@ -45,6 +49,22 @@ const routes: VueRouter.RouteRecordRaw[] = [
 		meta: {
 			requiresAuth: true
 		}
+	},
+	{
+		path: '/setting',
+		component: UserSetting,
+		meta: {
+			requiresAuth: true
+		},
+		redirect: { name: 'update-user' },
+		children: [
+			{ path: 'general', name: 'update-user', component: UpdateUser },
+			{
+				path: 'change-password',
+				name: 'change-password',
+				component: ChangePassword
+			}
+		]
 	}
 ];
 
