@@ -41,10 +41,10 @@
 						class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
 					>
 						<div class="relative bg-green-300 py-4 px-3">
-							<a
+							<router-link
+								:to="item.href"
 								v-for="item in items"
 								:key="item.name"
-								:href="item.href"
 								class="flex items-center p-2 transition duration-150 ease-in-out rounded-lg hover:bg-green-400 focus:outline-none focus-visible:ring focus-visible:ring-opacity-50 font-bold"
 							>
 								<div
@@ -57,7 +57,7 @@
 										{{ item.name }}
 									</p>
 								</div>
-							</a>
+							</router-link>
 							<button
 								@click.stop="$emit('logoutUser')"
 								class="flex items-center p-2 w-full transition duration-150 ease-in-out rounded-lg hover:bg-green-400 focus:outline-none focus-visible:ring focus-visible:ring-opacity-50 font-bold"
