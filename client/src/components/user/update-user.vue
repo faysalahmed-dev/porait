@@ -107,7 +107,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, ref } from 'vue';
+import { defineComponent, inject, ref, computed } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import { useToast } from 'vue-toastification';
 import { useMutation } from '@urql/vue';
@@ -126,7 +126,7 @@ export default defineComponent({
 		const authUser = inject<{ value: IUser }>('authUser');
 		const toast = useToast();
 		const { executeMutation, fetching: isSubmitting } = useMutation(UPDATE_USER_DATA);
-
+		const avater = computed(() => authUser?.value.images.avater);
 		const formValues = {
 			first_name: authUser!.value.first_name.trim(),
 			last_name: authUser!.value.last_name.trim(),
@@ -169,7 +169,7 @@ export default defineComponent({
 			handleSubmit,
 			errors,
 			resetForm,
-			avater: authUser?.value.images.avater,
+			avater,
 			handleInputChange,
 			onHandleSubmit,
 			isSubmitting,
