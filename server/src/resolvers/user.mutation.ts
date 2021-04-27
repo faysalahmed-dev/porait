@@ -12,10 +12,12 @@ import {
 } from '../helpers/auth';
 import { resizeImage } from '../helpers/image';
 import { getHostUrl, getUserAgent } from '../helpers/utils';
-import { ResizeOptions } from 'sharp';
+import sharp, { ResizeOptions } from 'sharp';
 import { IUserTokenDecode, IUserUpdate, IUserUpdatePassword } from '../@types/user';
 import { registerSchema, updatePasswordSchema } from '../utils/validatorSchema';
 import { decode } from 'jsonwebtoken';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { getClientIp } from 'request-ip';
 
 const userResolvers: IResolvers = {
@@ -35,8 +37,9 @@ const userResolvers: IResolvers = {
 					const fileUrl = `${getHostUrl(ctx.request)}/upload/${filename}`;
 					try {
 						const opt = {} as ResizeOptions;
-						if (args.type === 'avater') {
-							opt.width = 400;
+						if (args.type === 'cover') {
+							opt.height = 500;
+							opt.fit = sharp.fit.cover;
 						}
 						await resizeImage(fileChank, uploadFolder, opt);
 						await ctx.prisma.user.update({

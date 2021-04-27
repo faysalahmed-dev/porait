@@ -7,7 +7,6 @@ export const resizeImage = (
 ): Promise<OutputInfo> => {
 	return sharp(Buffer.concat(fileChank))
 		.resize({
-			fit: sharp.fit.cover,
 			...opt
 		})
 		.withMetadata()
