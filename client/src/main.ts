@@ -13,6 +13,7 @@ import 'vue-toastification/dist/index.css';
 import 'eva-icons/style/eva-icons.css';
 import './assets/style.css';
 import 'loaders.css/loaders.css';
+import 'vue-advanced-cropper/dist/style.css';
 
 const app = createApp({
 	setup() {
