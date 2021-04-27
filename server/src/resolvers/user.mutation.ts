@@ -76,7 +76,8 @@ const userResolvers: IResolvers = {
 				'last_name',
 				'email',
 				'username',
-				'address'
+				'address',
+				'gender'
 			];
 
 			const argsKey: string[] = Object.keys(args.data);
