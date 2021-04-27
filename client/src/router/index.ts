@@ -28,14 +28,38 @@ const routes: VueRouter.RouteRecordRaw[] = [
 		name: 'home-page',
 		component: Home
 	},
-	{ path: '/login', name: 'login-page', component: Login },
-	{ path: '/register', name: 'register-page', component: Register },
-	{ path: '/forget-password', name: 'forget-password-page', component: ForgetPassword },
+	{
+		path: '/login',
+		name: 'login-page',
+		component: Login,
+		meta: {
+			publicOnly: true
+		}
+	},
+	{
+		path: '/register',
+		name: 'register-page',
+		component: Register,
+		meta: {
+			publicOnly: true
+		}
+	},
+	{
+		path: '/forget-password',
+		name: 'forget-password-page',
+		component: ForgetPassword,
+		meta: {
+			publicOnly: true
+		}
+	},
 	{
 		path: '/password-reset',
 		name: 'password-reset-page',
 		component: PasswordReset,
-		beforeEnter: [checkQuery]
+		beforeEnter: [checkQuery],
+		meta: {
+			publicOnly: true
+		}
 	},
 	{
 		path: '/:pathMatch(.*)*',
@@ -74,18 +98,25 @@ const router = VueRouter.createRouter({
 	strict: true
 });
 
+const getUser = () => client.query(AUTH_USER).toPromise();
+
 router.beforeResolve((to, from, next) => {
-	if (to.meta.requiresAuth) {
-		client
-			.query(AUTH_USER)
-			.toPromise()
-			.then(result => {
-				if (result.data && !result.error) {
-					next();
-				} else {
-					next({ name: 'login-page', query: { callback: to.fullPath } });
-				}
-			});
+	if (to.meta.publicOnly) {
+		getUser().then(result => {
+			if (result.data && !result.error) {
+				next('/');
+			} else {
+				next();
+			}
+		});
+	} else if (to.meta.requiresAuth) {
+		getUser().then(result => {
+			if (result.data && !result.error) {
+				next();
+			} else {
+				next({ name: 'login-page', query: { callback: to.fullPath } });
+			}
+		});
 	} else {
 		next();
 	}
