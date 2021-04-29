@@ -48,16 +48,21 @@ type LoggedInDeviceDetails {
 	area: Int
 }
 
-type LoggedInDevice {
-	agent: String!
-	ip_address: String!
+type LoggedInDeviceInfo {
+	agent: String
+	ip_address: String
 	details: LoggedInDeviceDetails
+}
+
+type LoggedInDevice {
+	current_device: LoggedInDeviceInfo!
+	logged_in_devices: [LoggedInDeviceInfo]
 }
 
 type Query {
 	user: User
 	authUser: User!
-	loggedInDevices: [LoggedInDevice!]
+	loggedInDevices: LoggedInDevice!
 }
 
 type Mutation {
