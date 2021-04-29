@@ -13,6 +13,12 @@
 			</router-link>
 		</li>
 		<li>
+			<router-link :to="{ name: 'security' }">
+				<i class="eva eva-shield-outline eva-lg"></i>
+				Security
+			</router-link>
+		</li>
+		<li>
 			<router-link to="/">
 				<i class="eva eva-info-outline eva-lg"></i>
 				Information
