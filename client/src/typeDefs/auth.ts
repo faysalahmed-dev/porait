@@ -18,6 +18,18 @@ const fragments = {
 			gender
 			address
 		}
+	`,
+	loggedInDevicesFragment: gql`
+		fragment loggedInDevicesFragment on LoggedInDeviceInfo {
+			agent
+			ip_address
+			details {
+				country
+				timezone
+				city
+				region
+			}
+		}
 	`
 };
 export const REGISTER_USER = gql`
@@ -99,5 +111,25 @@ export const UPDATE_PASSWORD = gql`
 		updatePassword(data: $data) {
 			token
 		}
+	}
+`;
+
+export const GET_LOGGED_IN_DEVICES = gql`
+	query getLoggedInDevices {
+		loggedInDevices {
+			current_device {
+				...loggedInDevicesFragment
+			}
+			logged_in_devices {
+				...loggedInDevicesFragment
+			}
+		}
+	}
+	${fragments.loggedInDevicesFragment}
+`;
+
+export const LOGGED_OUT_ALL_DEVICES = gql`
+	mutation logoutAllUser {
+		logoutAllUser
 	}
 `;
