@@ -8,6 +8,7 @@ import Router from './router';
 import Layout from './components/layout.vue';
 import { client } from './client';
 import { progressBarOpt, toastOpt } from './utils/appOptions';
+import LoadingSpiner from './components/utils/loading-spiner.vue';
 
 import 'vue-toastification/dist/index.css';
 import 'eva-icons/style/eva-icons.css';
@@ -22,6 +23,7 @@ const app = createApp({
 	render: () => h(App)
 });
 app.component('default-layout', Layout);
+app.component('loading-spiner', LoadingSpiner);
 app.use(Toast, toastOpt);
 app.use(VueProgressBar, progressBarOpt);
 app.use(Router);
