@@ -1,4 +1,4 @@
-import { IRequest } from './../../prisma';
+import { IRequest, Context } from './../../prisma';
 import useragent from 'useragent';
 import url from 'url';
 
@@ -28,3 +28,11 @@ export function getHostUrl(request: IRequest): string {
 		host: request.get('host')
 	});
 }
+
+export const getTokenFromHeader = (context: Context): string | null => {
+	const authHeader = context.connection
+		? context.connection.context.authorization
+		: context.request.headers.authorization;
+	if (!authHeader) return null;
+	return authHeader.replace('Bearer ', '');
+};
