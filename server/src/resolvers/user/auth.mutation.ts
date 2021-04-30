@@ -1,27 +1,28 @@
-import { Context } from '../../prisma';
 import { IResolvers } from 'graphql-tools';
-import {
-	getToken,
-	hashPassword,
-	comparePassword,
-	verifyAuthToken
-} from '../helpers/auth';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getClientIp } from 'request-ip';
 import geoIp from 'geoip-lite';
 import moment from 'moment';
 import { decode } from 'jsonwebtoken';
-import eamilSender, { genEmailToken } from '../helpers/email';
+import { Context } from '@server/prisma';
+
+import {
+	getToken,
+	hashPassword,
+	comparePassword,
+	verifyAuthToken
+} from '@src/helpers/auth';
+import eamilSender, { genEmailToken } from '@src/helpers/email';
 import _ from 'lodash';
-import { getUserAgent, getHostUrl } from '../helpers/utils';
+import { getUserAgent, getHostUrl } from '@src/helpers/utils';
 import {
 	loginSchema,
 	registerSchema,
 	verifyPasswordResetToken
-} from '../utils/validatorSchema';
+} from '@src/utils/validatorSchema';
 
-import { IUser, IUserTokenDecode } from '../@types/user';
+import { IUser, IUserTokenDecode } from '@src/@types/user';
 
 type MyEnum = 'email' | 'username';
 

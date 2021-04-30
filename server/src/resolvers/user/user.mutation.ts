@@ -1,24 +1,25 @@
-import geoIp from 'geoip-lite';
-import { IResolvers } from 'graphql-tools';
-import { Context } from '../../prisma';
-import { FileUpload } from 'graphql-upload';
 import path from 'path';
 import { v4 as uuid } from 'uuid';
+import geoIp from 'geoip-lite';
+import { IResolvers } from 'graphql-tools';
+import { FileUpload } from 'graphql-upload';
+import sharp, { ResizeOptions } from 'sharp';
+import { decode } from 'jsonwebtoken';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { getClientIp } from 'request-ip';
+
+import { Context } from '@server/prisma';
 import {
 	comparePassword,
 	getToken,
 	hashPassword,
 	verifyAuthToken
-} from '../helpers/auth';
-import { resizeImage } from '../helpers/image';
-import { getHostUrl, getUserAgent } from '../helpers/utils';
-import sharp, { ResizeOptions } from 'sharp';
-import { IUserTokenDecode, IUserUpdate, IUserUpdatePassword } from '../@types/user';
-import { registerSchema, updatePasswordSchema } from '../utils/validatorSchema';
-import { decode } from 'jsonwebtoken';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { getClientIp } from 'request-ip';
+} from '@src/helpers/auth';
+import { resizeImage } from '@src/helpers/image';
+import { getHostUrl, getUserAgent } from '@src/helpers/utils';
+import { IUserTokenDecode, IUserUpdate, IUserUpdatePassword } from '@src/@types/user';
+import { registerSchema, updatePasswordSchema } from '@src/utils/validatorSchema';
 
 const userResolvers: IResolvers = {
 	async uploadImage(_, args, ctx: Context) {
