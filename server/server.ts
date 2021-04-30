@@ -1,10 +1,14 @@
-import { GraphQLServer, Options } from 'graphql-yoga';
-import { createContext } from './prisma';
-import resolvers from './src/resolvers';
-import { GraphQLFileLoader, addResolversToSchema, loadSchemaSync } from 'graphql-tools';
+import 'module-alias/register';
+import 'source-map-support/register';
+
 import path from 'path';
 import serveStatic from 'serve-static';
 import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload';
+import { GraphQLServer, Options } from 'graphql-yoga';
+import { GraphQLFileLoader, addResolversToSchema, loadSchemaSync } from 'graphql-tools';
+
+import { createContext } from './prisma';
+import resolvers from './src/resolvers';
 
 const filePath = path.join(__dirname, 'graphql-schema', 'schema.graphql');
 const schema = loadSchemaSync(filePath, {
