@@ -1,0 +1,17 @@
+#import * from "enums.graphql"
+
+input CreatePostInput {
+	title: String!
+	content: String
+	tags: [String!]
+	published: Boolean!
+	file: Upload
+}
+
+input UpdatePostInput {
+	title: String
+	content: String
+	tags: [String!]
+	published: Boolean
+	file: Upload
+}

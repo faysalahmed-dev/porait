@@ -8,3 +8,20 @@ enum FileType {
 	avater
 	cover
 }
+
+enum PostType {
+	VIDEO
+	IMAGE
+	TEXT
+}
+
+enum UserReactEnum {
+	like
+	dislike
+}
+
+enum PostReactType {
+	LIKE
+	NONE
+	UNLIKE
+}

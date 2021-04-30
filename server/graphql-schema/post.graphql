@@ -1,0 +1,66 @@
+#import * from "post-input.graphql"
+#import UserReactEnum, PostType, PostReactType from "enums.graphql"
+#import User from "user.graphql"
+
+scalar Upload
+
+type PostReact {
+	id: String!
+	user_id: String!
+	post_id: String!
+}
+
+type CommentLike {
+	id: String!
+	user_id: String!
+	comment_id: String!
+}
+
+type Comment {
+	id: String!
+	image: String
+	text: String
+	created_at: String!
+	updated_at: String!
+	author: User!
+	post: Post!
+	reply: [Comment]
+	likes: [CommentLike]
+}
+
+type PostunLike {
+	unlikeCount: Int!
+	docRefs: [PostReact!]
+}
+type PostLike {
+	likeCount: Int!
+	docRefs: [PostReact!]
+}
+
+type Post {
+	id: String!
+	title: String!
+	type: PostType!
+	content: String
+	published: Boolean
+	file_url: String
+	likes: PostLike!
+	unlike: PostunLike!
+	comments: [Comment]
+	created_at: String!
+	updated_at: String!
+	author: User!
+	tags: [String!]
+}
+
+type Query {
+	getPost(post_id: String!): Post!
+	getPosts: [Post!]
+}
+
+type Mutation {
+	createNewPost(postData: CreatePostInput!): Post!
+	updatePost(post_id: String!, postData: UpdatePostInput!): Post!
+	deletePost(post_id: String!): String!
+	postReact(post_id: String!, type: PostReactType!): String!
+}
