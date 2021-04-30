@@ -1,4 +1,4 @@
-import { IRequest, Context } from './../../prisma';
+import { IRequest, Context } from '@server/prisma';
 import useragent from 'useragent';
 import url from 'url';
 

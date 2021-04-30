@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Context } from '../../prisma';
+import { Context } from '@server/prisma';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
 import bycript from 'bcryptjs';
 import { promisify } from 'util';
-import { IUserTokenDecode, IUserDataFull } from '../@types/user';
+import { IUserTokenDecode, IUserDataFull } from '@src/@types/user';
 
 export const getTime = (): number =>
 	Date.now() + moment.duration(90, 'days').asMilliseconds();
