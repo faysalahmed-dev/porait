@@ -10,38 +10,59 @@ generator client {
 enum PostType {
   VIDEO
   IMAGE
+  TEXT
+}
+
+enum PostReactType {
+  LIKE
+  UNLIKE
+}
+
+model PostReact {
+  id      String        @id @default(uuid())
+  user_id String
+  type    PostReactType
+  Post    Post?         @relation(fields: [post_id], references: [id])
+  post_id String?
+}
+
+model CommentLike {
+  id         String  @id @default(uuid())
+  user_id    String
+  comment    Comment @relation(fields: [comment_id], references: [id])
+  comment_id String
 }
 
 model Comment {
-  id         String    @id @default(uuid())
+  id         String        @id @default(uuid())
   text       String
   image      String
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  author     User      @relation(fields: [author_id], references: [id])
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+  author     User          @relation(fields: [author_id], references: [id])
   author_id  String
-  post       Post      @relation(fields: [post_id], references: [id])
+  post       Post          @relation(fields: [post_id], references: [id])
   post_id    String
-  likes      Int
-  reply      Comment   @relation("CommentToComment", fields: [comment_id], references: [id])
-  Comment    Comment[] @relation("CommentToComment")
-  comment_id String
-
+  likes      CommentLike[]
+  reply      Comment[]     @relation("CommentToComment")
+  Comment    Comment?      @relation("CommentToComment", fields: [commentId], references: [id])
+  commentId  String?
 }
 
 model Post {
-  id         String    @id @default(uuid())
-  title      String    @db.Char(255)
-  type       PostType  @default(IMAGE)
-  content    String
-  published  Boolean   @default(false)
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  author     User      @relation(fields: [author_id], references: [id])
+  id         String      @id @default(uuid())
+  title      String
+  type       PostType    @default(IMAGE)
+  file_url   String?
+  content    String?
+  published  Boolean     @default(true)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  author     User        @relation(fields: [author_id], references: [id])
   author_id  String
+  reacts     PostReact[]
   comments   Comment[]
   tags       String[]
-  is_public  Boolean   @default(true)
 }
 
 model Token {
@@ -64,13 +85,13 @@ enum Gender {
 
 model User {
   id                   String    @id @default(uuid())
-  first_name           String    @db.Char(20)
-  last_name            String    @db.Char(20)
-  username             String    @unique @db.Char(20)
+  first_name           String
+  last_name            String
+  username             String    @unique
   email                String    @unique
   email_verified       Boolean   @default(false)
   email_verify_token   String    @default("")
-  password             String    @db.Char(90)
+  password             String
   password_changed_at  DateTime  @default(now())
   password_reset_token Json?
   active               Boolean   @default(true)
