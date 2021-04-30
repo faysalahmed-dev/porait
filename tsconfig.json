@@ -6,8 +6,20 @@
 		"lib": ["esnext"],
 		"esModuleInterop": true,
 		"typeRoots": ["node_modules/@types", "server/src/@types"],
-		"baseUrl": "."
+		"baseUrl": ".",
+		"target": "ES2016",
+		"moduleResolution": "node",
+		"module": "CommonJS",
+		"paths": {
+			"@server/*": ["server/*"],
+			"@src/*": ["server/src/*"]
+		}
 	},
-	"exclude": ["node_modules", "client", "__test__"],
-	"include": ["server"]
+	"exclude": [
+		"./node_modules",
+		"./client",
+		"./__test__",
+		"node_modules/.prisma/client/index.d.ts"
+	],
+	"include": ["./server"]
 }
