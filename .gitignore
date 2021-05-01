@@ -4,6 +4,7 @@ server/public/upload/**
 config/*
 !config/sample.env
 .*.txt
+graphql.schema.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/node,vue,vuejs
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,vue,vuejs

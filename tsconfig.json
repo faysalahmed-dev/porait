@@ -19,7 +19,8 @@
 		"./node_modules",
 		"./client",
 		"./__test__",
-		"node_modules/.prisma/client/index.d.ts"
+		"node_modules/.prisma/client/index.d.ts",
+		"./server/src/@types/generates.ts"
 	],
 	"include": ["./server"]
 }
