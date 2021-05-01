@@ -1,6 +1,7 @@
 #import * from "post-input.graphql"
 #import UserReactEnum, PostType, PostReactType from "enums.graphql"
 #import User from "user.graphql"
+#import Comment from "comment.graphql"
 
 scalar Upload
 
@@ -8,24 +9,6 @@ type PostReact {
 	id: String!
 	user_id: String!
 	post_id: String!
-}
-
-type CommentLike {
-	id: String!
-	user_id: String!
-	comment_id: String!
-}
-
-type Comment {
-	id: String!
-	image: String
-	text: String
-	created_at: String!
-	updated_at: String!
-	author: User!
-	post: Post!
-	reply: [Comment]
-	likes: [CommentLike]
 }
 
 type PostunLike {

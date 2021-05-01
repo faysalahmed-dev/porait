@@ -1,2 +1,3 @@
-# import * from "user.graphql"
+#import * from "user.graphql"
 #import * from "post.graphql"
+#import * from "comment.graphql"

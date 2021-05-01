@@ -1,0 +1,48 @@
+#import User from "user.graphql"
+#import Post from "post.graphql"
+
+scalar Upload
+
+type CommentLikeRef {
+	id: String!
+	user_id: String!
+	post_id: String!
+}
+
+type CommentLike {
+	likeCount: Int!
+	docRefs: [CommentLikeRef!]
+}
+
+type Comment {
+	id: String!
+	image: String
+	text: String
+	created_at: String!
+	updated_at: String!
+	author: User!
+	post: Post!
+	reply: [Comment]
+	likes: CommentLike!
+}
+
+input CreateComment {
+	text: String!
+	file: Upload
+}
+
+input UpdateComment {
+	text: String
+	file: Upload
+}
+
+type Query {
+	getComments(post_id: String!): [Comment!]
+}
+
+type Mutation {
+	createComment(post_id: String!, data: CreateComment!): Comment!
+	deleteComment(post_id: String!, comment_id: String!): String!
+	updateComment(post_id: String!, comment_id: String!, data: UpdateComment!): Comment!
+	reactComment(post_id: String!, comment_id: String!): String!
+}
