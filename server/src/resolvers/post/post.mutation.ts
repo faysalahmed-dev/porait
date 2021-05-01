@@ -3,6 +3,7 @@ import path from 'path';
 import _ from 'lodash';
 import { IResolvers } from 'graphql-tools';
 import { FileUpload } from 'graphql-upload';
+import { PostType } from '.prisma/client';
 
 import { Context } from '@server/prisma';
 
@@ -35,6 +36,7 @@ export const postResolvers: IResolvers = {
 			]);
 			const file: FileUpload = await args.file;
 			let fileUrl = '';
+			let fileType: PostType = 'TEXT';
 			if (file) {
 				const stream = file.createReadStream();
 				const uploadFolder = path.resolve(
@@ -43,6 +45,7 @@ export const postResolvers: IResolvers = {
 				);
 				stream.pipe(fs.createWriteStream(uploadFolder));
 				fileUrl = `${getHostUrl(context.request)}/upload/posts/${file.filename}`;
+				fileType = 'IMAGE';
 			}
 			const posts = await context.prisma.post.create({
 				data: {
@@ -51,7 +54,7 @@ export const postResolvers: IResolvers = {
 						connect: { id: user.id }
 					},
 					file_url: fileUrl,
-					type: 'IMAGE'
+					type: fileType
 				},
 				include: {
 					author: true
