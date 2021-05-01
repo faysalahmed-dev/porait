@@ -13,6 +13,24 @@ const UserResolver: IResolvers = {
 			console.log(err);
 			throw err;
 		}
+	},
+	async getPost(parent, args: { post_id: string }, context: Context) {
+		try {
+			const post = await context.prisma.post.findFirst({
+				where: {
+					id: args.post_id
+				},
+				include: { author: true, comments: true, reacts: true },
+				rejectOnNotFound(err) {
+					err.message = 'post not found';
+					return err;
+				}
+			});
+			return post;
+		} catch (err) {
+			console.log(err);
+			throw err;
+		}
 	}
 };
 
