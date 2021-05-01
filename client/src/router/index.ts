@@ -10,6 +10,7 @@ import UserSetting from '@/pages/account-setting.vue';
 
 import UpdateUser from '@/components/user/update-user.vue';
 import ChangePassword from '@/components/user/change-password.vue';
+import Security from '@/components/user/security.vue';
 
 import { client } from '../client';
 import { AUTH_USER } from '../typeDefs';
@@ -87,6 +88,11 @@ const routes: VueRouter.RouteRecordRaw[] = [
 				path: 'change-password',
 				name: 'change-password',
 				component: ChangePassword
+			},
+			{
+				path: 'security',
+				name: 'security',
+				component: Security
 			}
 		]
 	}

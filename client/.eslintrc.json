@@ -19,6 +19,7 @@
 	"rules": {
 		"vue/no-multiple-template-root": "off",
 		"import/extensions": "off",
-		"import/prefer-default-export": "off"
+		"import/prefer-default-export": "off",
+		"camelcase": "off"
 	}
 }
